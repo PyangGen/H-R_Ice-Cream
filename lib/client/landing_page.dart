@@ -176,7 +176,7 @@ class LandingPage extends StatelessWidget {
                         ),
                       ),
 
-                      // ------------------ QUINJAY LOGO ------------------
+                      // ------------------ H&R LOGO ------------------
                       Container(
                         width: 260,
                         height: 200,
@@ -186,13 +186,13 @@ class LandingPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
                             Text(
-                              "Quinjay",
+                              "H&R",
                               style: TextStyle(
                                 fontFamily: "NationalPark",
                                 fontSize: 65,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.white,
-                                letterSpacing: -3,
+                                letterSpacing: 0,
                                 height: 0.9, // reduces space below the text
                               ),
                             ),

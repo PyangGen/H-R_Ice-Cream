@@ -57,13 +57,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
                       // LOGO
                       const Text(
-                        'Quinjay',
+                        'H&R',
                         style: TextStyle(
                           color: Color(0xFFE3001B),
                           fontSize: 36,
                           fontFamily: "NationalPark",
                           fontWeight: FontWeight.w800,
-                          letterSpacing: -3,
+                          letterSpacing: 0,
                           height: 0.9, // reduces space below the text
                         ),
                         textAlign: TextAlign.center,

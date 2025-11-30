@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ice_cream/client/forgot_password.dart';
 import 'create_page.dart'; // or the correct file path
 import 'home_page.dart'; // or the correct file path
 
@@ -67,13 +68,13 @@ class _LoginPageState extends State<LoginPage> {
                       const Spacer(),
                       // Logo
                       const Text(
-                        'Quinjay',
+                        'H&R',
                         style: TextStyle(
                           color: Color(0xFFE3001B),
                           fontSize: 36,
                           fontFamily: "NationalPark",
                           fontWeight: FontWeight.w800,
-                          letterSpacing: -3,
+                          letterSpacing: 0,
                           height: 0.9, // reduces space below the text
                         ),
                         textAlign: TextAlign.center,
@@ -217,7 +218,15 @@ class _LoginPageState extends State<LoginPage> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const ForgotPasswordPage(),
+                              ),
+                            );
+                          },
                           child: const Text(
                             'Forgot Password?',
                             style: TextStyle(

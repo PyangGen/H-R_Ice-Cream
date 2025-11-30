@@ -143,74 +143,80 @@ class _MenuPageState extends State<MenuPage> {
                   : const SizedBox()),
         flexibleSpace: showCheckout
             ? SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Brand Text with margin only
-                      const Padding(
-                        padding: EdgeInsets.only(
-                          top: 9,
-                          left: 10,
-                        ), // for the whole column
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Quinjay",
-                              style: TextStyle(
-                                fontFamily: "NationalPark",
-                                fontSize: 23,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -1.0, // tighter letters
-                                color: Color(0xFFE3001B),
-                              ),
-                            ),
-                            SizedBox(height: 0),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: 13,
-                              ), // move ICE CREAM slightly left
-                              child: Text(
-                                "ICE CREAM",
-                                style: TextStyle(
-                                  fontFamily: "NationalPark",
-                                  fontSize: 10, // slightly bigger
-                                  fontWeight: FontWeight.w800, // bolder
-                                  color: Color(0xFFE3001B),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 5,
-                        ), // move left little bit
-                        child: GestureDetector(
-                          onTap: () => setState(() => showCheckout = false),
-                          child: Container(
-                            height: 42,
-                            width: 42,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFF2F2F2),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.close, size: 22),
-                          ),
-                        ),
-                      ),
-                    ],
+  child: Padding(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 15,
+      vertical: 0,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Brand Text with margin only
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 9,
+            left: 10,
+          ), // for the whole column
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Move H&R slightly right
+              Padding(
+                padding: const EdgeInsets.only(left: 15), // move H&R right
+                child: Text(
+                  "H&R",
+                  style: TextStyle(
+                    fontFamily: "NationalPark",
+                    fontSize: 23,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0,
+                    color: Color(0xFFE3001B),
                   ),
                 ),
-              )
+              ),
+              // Move ICE CREAM up slightly
+              Transform.translate(
+                offset: const Offset(0, -8), // move up by 3 pixels
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 13),
+                  child: Text(
+                    "ICE CREAM",
+                    style: TextStyle(
+                      fontFamily: "NationalPark",
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFFE3001B),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.only(
+            right: 5,
+          ), // move left little bit
+          child: GestureDetector(
+            onTap: () => setState(() => showCheckout = false),
+            child: Container(
+              height: 42,
+              width: 42,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF2F2F2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.close, size: 22),
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+)
+
             : null,
         leadingWidth: 43, // ensures AppBar doesn't shrink the leading slot
         leading: showCheckout
@@ -802,7 +808,7 @@ class _MenuPageState extends State<MenuPage> {
         color: Colors.white,
         child: Column(
           children: [
-            const SizedBox(height: 15),
+            const SizedBox(height: 8),
 
             // ---------- HEADER ----------
             Padding(
