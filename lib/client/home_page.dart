@@ -13,9 +13,46 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final PageController _pageController = PageController();
+  late PageController _pageController;
+  Timer? _autoSlideTimer;
+  bool _userSwiped = false;
+
   int index = 0;
   bool forward = true;
+
+  final TextEditingController _searchController = TextEditingController();
+  String searchText = "";
+
+  final List<Map<String, String>> flavors = [
+    {"title": "Cookies & Cream", "img": "lib/client/images/home_page/CC.png"},
+    {"title": "Strawberry", "img": "lib/client/images/home_page/SB.png"},
+    {"title": "Vanilla", "img": "lib/client/images/home_page/SB.png"},
+    {"title": "Chocolate", "img": "lib/client/images/home_page/CC.png"},
+  ];
+
+  final List<Map<String, String>> recommends = [
+    {"title": "Matcha Ice Cream", "img": "lib/client/images/home_page/MIC.png"},
+    {"title": "Rum Raisin", "img": "lib/client/images/home_page/RR.png"},
+    {"title": "Chocolate", "img": "lib/client/images/home_page/MIC.png"},
+  ];
+
+  List<Map<String, String>> get filteredFlavors {
+    return flavors
+        .where(
+          (item) =>
+              item["title"]!.toLowerCase().contains(searchText.toLowerCase()),
+        )
+        .toList();
+  }
+
+  List<Map<String, String>> get filteredRecommends {
+    return recommends
+        .where(
+          (item) =>
+              item["title"]!.toLowerCase().contains(searchText.toLowerCase()),
+        )
+        .toList();
+  }
 
   final List<String> topImages = [
     "lib/client/images/home_page/TOP1.png",
@@ -46,6 +83,28 @@ class _HomePageState extends State<HomePage> {
         curve: Curves.easeInOut,
       );
     });
+
+    _pageController = PageController();
+
+    _autoSlideTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!_userSwiped) {
+        if (_pageController.hasClients) {
+          int next = _pageController.page!.round() + 1;
+          if (next == topImages.length) next = 0;
+
+          _pageController.animateToPage(
+            next,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      }
+    });
+  }
+
+  void _stopAutoSlide() {
+    _userSwiped = true;
+    _autoSlideTimer?.cancel();
   }
 
   @override
@@ -61,13 +120,13 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: _bottomNavBar(),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 10),
 
-              // ---------------- PROFILE + CART ----------------
+              // PROFILE + CART
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -78,8 +137,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Container(
-                    height: 43, // gamayng increase gikan 38
-                    width: 43, // gamayng increase gikan 38
+                    height: 43,
+                    width: 43,
                     decoration: const BoxDecoration(
                       color: Color(0xFFF2F2F2),
                       shape: BoxShape.circle,
@@ -87,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                     child: const Icon(
                       Icons.shopping_cart,
                       color: Color(0xFFE3001B),
-                      size: 22, // optional: adjust icon size to match circle
+                      size: 22,
                     ),
                   ),
                 ],
@@ -95,7 +154,7 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 13),
 
-              // ---------------- SEARCH BAR ----------------
+              // SEARCH BAR
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 height: 48,
@@ -107,16 +166,24 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.search,
-                      color: Color(0xFF848484),
-                      size: 23,
+                    Transform.translate(
+                      offset: const Offset(-5, 0),
+                      child: const Icon(
+                        Icons.search,
+                        color: Color(0xFFAFAFAF),
+                        size: 23,
+                      ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 3),
 
                     Expanded(
                       child: TextField(
-                        cursorColor: Colors.red,
+                        controller: _searchController,
+                        cursorColor: const Color(0xFFE3001C),
+                        cursorHeight: 18,
+                        onChanged: (value) {
+                          setState(() => searchText = value);
+                        },
                         style: const TextStyle(
                           fontSize: 14.18,
                           color: Color(0xFF848484),
@@ -137,14 +204,14 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 10),
 
-              // ---------------- EXPANDED CONTENT ----------------
+              // CONTENT
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.zero,
                   physics:
                       MediaQuery.of(context).orientation == Orientation.portrait
-                      ? NeverScrollableScrollPhysics() // ❌ No scroll on portrait
-                      : AlwaysScrollableScrollPhysics(), // ✅ Scroll on landscape
+                      ? const NeverScrollableScrollPhysics()
+                      : const AlwaysScrollableScrollPhysics(),
                   children: [
                     const Text(
                       "Top Orders",
@@ -156,7 +223,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 8),
 
-                    // ---------------- AUTO SLIDING TOP IMAGES ----------------
+                    // SLIDER
                     Transform.translate(
                       offset: const Offset(0, -3),
                       child: Stack(
@@ -166,16 +233,24 @@ class _HomePageState extends State<HomePage> {
                             child: SizedBox(
                               height: 180,
                               width: 376,
-                              child: PageView.builder(
-                                controller: _pageController,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: topImages.length,
-                                itemBuilder: (context, i) {
-                                  return Image.asset(
-                                    topImages[i],
-                                    fit: BoxFit.cover,
-                                  );
+                              child: NotificationListener<ScrollNotification>(
+                                onNotification: (notification) {
+                                  if (notification is ScrollStartNotification) {
+                                    _stopAutoSlide();
+                                  }
+                                  return false;
                                 },
+                                child: PageView.builder(
+                                  controller: _pageController,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: topImages.length,
+                                  itemBuilder: (context, i) {
+                                    return Image.asset(
+                                      topImages[i],
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -205,6 +280,8 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
+
+                    // FLAVORS TITLE
                     Transform.translate(
                       offset: const Offset(0, -6),
                       child: Row(
@@ -219,10 +296,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           Transform.translate(
-                            offset: const Offset(
-                              8,
-                              0,
-                            ), // move "See All" 8 pixels to the right
+                            offset: const Offset(8, 0),
                             child: TextButton(
                               onPressed: () {
                                 Navigator.push(
@@ -245,37 +319,33 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
+                    // FLAVORS CARDS (SEARCH FILTERED)
                     Transform.translate(
                       offset: const Offset(0, -10),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: [
-                            _flavorCard(
-                              "Cookies & Cream",
-                              "lib/client/images/home_page/CC.png",
-                            ),
-                            const SizedBox(width: 15),
-                            _flavorCard(
-                              "Strawberry",
-                              "lib/client/images/home_page/SB.png",
-                            ),
-                            const SizedBox(width: 15),
-                            _flavorCard(
-                              "Vanilla",
-                              "lib/client/images/home_page/SB.png",
-                            ),
-                            const SizedBox(width: 15),
-                            _flavorCard(
-                              "Chocolate",
-                              "lib/client/images/home_page/CC.png",
-                            ),
-                          ],
+                          children: filteredFlavors.isEmpty
+                              ? [
+                                  const Text(
+                                    "No result found",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ]
+                              : filteredFlavors.map((item) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 12),
+                                    child: _flavorCard(
+                                      item["title"]!,
+                                      item["img"]!,
+                                    ),
+                                  );
+                                }).toList(),
                         ),
                       ),
                     ),
 
-                    // ---------------- WE RECOMMEND ----------------
+                    // WE RECOMMEND TITLE
                     Transform.translate(
                       offset: const Offset(0, -4),
                       child: const Text(
@@ -288,27 +358,28 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
+                    // RECOMMEND CARDS (SEARCH FILTERED)
                     Transform.translate(
                       offset: const Offset(0, 2),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: [
-                            _recommendCard(
-                              "Matcha Ice Cream",
-                              "lib/client/images/home_page/MIC.png",
-                            ),
-                            const SizedBox(width: 15),
-                            _recommendCard(
-                              "Rum Raisin",
-                              "lib/client/images/home_page/RR.png",
-                            ),
-                            const SizedBox(width: 15),
-                            _recommendCard(
-                              "Chocolate",
-                              "lib/client/images/home_page/MIC.png",
-                            ),
-                          ],
+                          children: filteredRecommends.isEmpty
+                              ? [
+                                  const Text(
+                                    "No result found",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ]
+                              : filteredRecommends.map((item) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 12),
+                                    child: _recommendCard(
+                                      item["title"]!,
+                                      item["img"]!,
+                                    ),
+                                  );
+                                }).toList(),
                         ),
                       ),
                     ),
@@ -326,7 +397,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _flavorCard(String title, String img) {
     return Container(
-      width: 155, // Card width stays fixed
+      width: 155,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -338,9 +409,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(
-        8,
-      ), // Slightly smaller padding to allow more image width
+      padding: const EdgeInsets.all(8),
       child: Column(
         children: [
           ClipRRect(
@@ -348,8 +417,7 @@ class _HomePageState extends State<HomePage> {
             child: Image.asset(
               img,
               height: 80,
-              width: double
-                  .infinity, // Image fills available width inside the card
+              width: double.infinity,
               fit: BoxFit.cover,
             ),
           ),
@@ -381,7 +449,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ---------------- RECOMMEND CARD ----------------
   Widget _recommendCard(String title, String img) {
     return Container(
       width: 180,
@@ -392,18 +459,18 @@ class _HomePageState extends State<HomePage> {
           BoxShadow(
             color: Colors.grey.shade100,
             blurRadius: 5,
-            offset: const Offset(1, 3),
+            offset: Offset(1, 3),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(8), // Reduced padding
+      padding: const EdgeInsets.all(8),
       child: Row(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.asset(img, height: 51, width: 50, fit: BoxFit.cover),
           ),
-          const SizedBox(width: 8), // Slightly reduced spacing
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,7 +506,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ---------------- BOTTOM NAV ----------------
   Widget _bottomNavBar() {
     return Card(
       margin: const EdgeInsets.only(left: 18, right: 18, bottom: 12),
@@ -455,9 +521,7 @@ class _HomePageState extends State<HomePage> {
               imagePath: "lib/client/images/home_page/home.png",
               label: "Home",
               active: true,
-              onTap: () {
-                // Stay on home page
-              },
+              onTap: () {},
             ),
             _BottomIcon(
               imagePath: "lib/client/images/home_page/local_mall.png",
@@ -503,21 +567,21 @@ class _BottomIcon extends StatelessWidget {
   final String? imagePath;
   final String label;
   final bool active;
-  final VoidCallback? onTap; // ← added
+  final VoidCallback? onTap;
 
   const _BottomIcon({
     this.icon,
     this.imagePath,
     required this.label,
     this.active = false,
-    this.onTap, // ← added
+    this.onTap,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap, // ← call onTap when tapped
+      onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
