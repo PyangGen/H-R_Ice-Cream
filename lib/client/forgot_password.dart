@@ -126,14 +126,21 @@ SizedBox(
             );
           }
         : null, // disabled when hasText is false
-    style: ElevatedButton.styleFrom(
-      backgroundColor: hasText
-          ? const Color(0xFFE3001B) // active color
-          : const Color(0xFFE0E0E0), // optional disabled color
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+        (Set<MaterialState> states) {
+          if (states.contains(MaterialState.disabled)) {
+            return const Color(0xFFFF9CA8); // disabled color
+          }
+          return const Color(0xFFE3001B); // enabled color
+        },
       ),
-      elevation: 0,
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+      elevation: MaterialStateProperty.all(0),
     ),
     child: const Text(
       "Continue",
@@ -145,6 +152,7 @@ SizedBox(
     ),
   ),
 ),
+
 
               ],
             ),

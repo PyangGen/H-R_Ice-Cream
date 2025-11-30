@@ -181,31 +181,43 @@ class LandingPage extends StatelessWidget {
                         width: 260,
                         height: 200,
                         alignment: Alignment.center,
-                        padding: const EdgeInsets.only(bottom: 20),
+                        padding: const EdgeInsets.only(bottom: 0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // aligns children to left
                           children: const [
-                            Text(
-                              "H&R",
-                              style: TextStyle(
-                                fontFamily: "NationalPark",
-                                fontSize: 65,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                letterSpacing: 0,
-                                height: 0.9, // reduces space below the text
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: 22,
+                              ), // move left by 10 pixels
+                              child: Text(
+                                "H&R",
+                                style: TextStyle(
+                                  fontFamily: "NationalPark",
+                                  fontSize: 65,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: 0,
+                                  height: 0.9,
+                                ),
                               ),
                             ),
-                            SizedBox(height: 15), // very small spacing
-                            Text(
-                              "ICE CREAM",
-                              style: TextStyle(
-                                fontFamily: "NationalPark",
-                                fontSize: 25,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 4,
-                                color: Colors.white,
-                                height: 1, // optional
+                            SizedBox(height: 1),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: 10,
+                              ), // match alignment with H&R
+                              child: Text(
+                                "ICE CREAM",
+                                style: TextStyle(
+                                  fontFamily: "NationalPark",
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 4,
+                                  color: Colors.white,
+                                  height: 1,
+                                ),
                               ),
                             ),
                           ],

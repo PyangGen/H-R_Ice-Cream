@@ -67,30 +67,42 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       const Spacer(),
                       // Logo
-                      const Text(
-                        'H&R',
-                        style: TextStyle(
-                          color: Color(0xFFE3001B),
-                          fontSize: 36,
-                          fontFamily: "NationalPark",
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0,
-                          height: 0.9, // reduces space below the text
+                      Transform.translate(
+                        offset: const Offset(-3, 0), // move left by 5 pixels
+                        child: const Text(
+                          'H&R',
+                          style: TextStyle(
+                            color: Color(0xFFE3001B),
+                            fontSize: 36,
+                            fontFamily: "NationalPark",
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0,
+                            height: 0.9, // reduces space below the text
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 5), // very small spacing
-                      const Text(
-                        'ICE CREAM',
-                        style: TextStyle(
-                          color: Color(0xFFE3001B),
-                          fontSize: 16,
-                          fontFamily: "NationalPark",
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 2,
+                      const SizedBox(
+                        height: 1,
+                      ), // smaller spacing between the texts
+                      Transform.translate(
+                        offset: const Offset(
+                          0,
+                          -3,
+                        ), // move ICE CREAM up by 5 pixels
+                        child: const Text(
+                          'ICE CREAM',
+                          style: TextStyle(
+                            color: Color(0xFFE3001B),
+                            fontSize: 16,
+                            fontFamily: "NationalPark",
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 2,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
+
                       const SizedBox(height: 40),
                       const Align(
                         alignment: Alignment.centerLeft,
@@ -99,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(fontSize: 16, color: Colors.black),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
                       // Email Field
                       Container(
                         decoration: BoxDecoration(
@@ -262,6 +274,7 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(
                               fontSize: 16,
                               color: Color(0xFFFFFFFF),
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
@@ -302,7 +315,8 @@ class _LoginPageState extends State<LoginPage> {
                                 'Sign In with Google',
                                 style: TextStyle(
                                   fontSize: 14.27,
-                                  color: Color(0xFF434343),
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ],
@@ -326,14 +340,14 @@ class _LoginPageState extends State<LoginPage> {
                             child: const Text(
                               'Sign up',
                               style: TextStyle(
-                                color: Colors.red,
+                                color: Color(0xFFE3001C),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 18),
                     ],
                   ),
                 ),
