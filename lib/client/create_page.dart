@@ -128,6 +128,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           obscureText: _obscurePassword,
                           style: const TextStyle(fontSize: 14), // <<< MATCH
                           cursorColor: const Color(0xFFE3001C),
+                          cursorHeight: 18,
                           decoration: InputDecoration(
                             hintText: "Create Password",
                             hintStyle: const TextStyle(
@@ -171,6 +172,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           obscureText: _obscureConfirmPassword,
                           style: const TextStyle(fontSize: 14), // <<< MATCH
                           cursorColor: const Color(0xFFE3001C),
+                          cursorHeight: 18,
                           decoration: InputDecoration(
                             hintText: "Confirm Password",
                             hintStyle: const TextStyle(
@@ -330,13 +332,13 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  // Reusable text field widget
   Widget _buildInput(String hint, TextEditingController controller) {
     return Container(
       decoration: _shadowBox(),
       child: TextField(
         controller: controller,
         cursorColor: const Color(0xFFE3001C),
+        cursorHeight: 18,
         style: const TextStyle(fontSize: 14),
         decoration: InputDecoration(
           hintText: hint,

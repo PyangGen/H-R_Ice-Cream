@@ -131,6 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                           obscureText: _obscureEmail,
                           style: const TextStyle(fontSize: 14),
                           cursorColor: Color(0xFFE3001C),
+                          cursorHeight: 18,
                           decoration: InputDecoration(
                             hintText: 'Email Address',
                             hintStyle: const TextStyle(fontSize: 14),
@@ -188,6 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                             fontSize: 14,
                           ), // <<< MATCH EMAIL TEXT SIZE
                           cursorColor: Color(0xFFE3001C),
+                          cursorHeight: 18,
                           decoration: InputDecoration(
                             hintText: 'Password',
                             hintStyle: const TextStyle(
