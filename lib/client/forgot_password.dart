@@ -114,46 +114,46 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ),
 
                 const SizedBox(height: 30),
-SizedBox(
-  width: double.infinity,
-  height: 55,
-  child: ElevatedButton(
-    onPressed: hasText
-        ? () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const OTPcode()),
-            );
-          }
-        : null, // disabled when hasText is false
-    style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-        (Set<MaterialState> states) {
-          if (states.contains(MaterialState.disabled)) {
-            return const Color(0xFFFF9CA8); // disabled color
-          }
-          return const Color(0xFFE3001B); // enabled color
-        },
-      ),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-      ),
-      elevation: MaterialStateProperty.all(0),
-    ),
-    child: const Text(
-      "Continue",
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: Colors.white,
-      ),
-    ),
-  ),
-),
-
-
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    onPressed: hasText
+                        ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const OTPcode(),
+                              ),
+                            );
+                          }
+                        : null, // disabled when hasText is false
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.disabled)) {
+                            return const Color(0xFFFF9CA8); // disabled color
+                          }
+                          return const Color(0xFFE3001B); // enabled color
+                        },
+                      ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      elevation: MaterialStateProperty.all(0),
+                    ),
+                    child: const Text(
+                      "Continue",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -288,7 +288,7 @@ class _OTPcodeState extends State<OTPcode> {
                     "Continue",
                     style: TextStyle(
                       fontSize: 17,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                       color: Colors.white,
                     ),
                   ),
@@ -373,168 +373,271 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  bool get _isContinueEnabled {
+    return newPasswordController.text.isNotEmpty &&
+        confirmPasswordController.text.isNotEmpty;
+  }
 
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
   bool keepMeLoggedIn = false;
+  bool _showPasswordEyee = false;
+  bool _showConfirmPasswordEyee = false;
 
- @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Colors.white,
-    body: SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20), // 🔥 SAME AS FORGOT PAGE
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 10),
+  @override
+  void initState() {
+    super.initState();
 
-              // 🔥 SAME BACK ARROW AS FORGOT PASSWORD PAGE
-              Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 43,
-                    height: 43,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF2F2F2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                      size: 20,
+    // Listener for new password field
+    newPasswordController.addListener(() {
+      setState(() {
+        _showPasswordEyee = newPasswordController.text.isNotEmpty;
+      });
+    });
+
+    // Listener for confirm password field
+    confirmPasswordController.addListener(() {
+      setState(() {
+        _showConfirmPasswordEyee = confirmPasswordController.text.isNotEmpty;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+            ), // 🔥 SAME AS FORGOT PAGE
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10),
+
+                // 🔥 SAME BACK ARROW AS FORGOT PASSWORD PAGE
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 43,
+                      height: 43,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF2F2F2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 140), // 🔥 SAME SPACING AS FORGOT PAGE
+                const SizedBox(height: 120), // 🔥 SAME SPACING AS FORGOT PAGE
 
-              const Text(
-                "Reset Password",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1C1C1C),
+                const Text(
+                  "Reset Password",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1C1C1C),
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-              const Text(
-                "Enter your new password",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFF505050),
+                const Text(
+                  "Enter your new password",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Color(0xFF505050)),
                 ),
-              ),
 
-              const SizedBox(height: 50),
+                const SizedBox(height: 50),
 
-              // New Password Field
-              TextField(
-                controller: newPasswordController,
-                obscureText: _obscureNewPassword,
-                decoration: InputDecoration(
-                  hintText: "Create new password",
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureNewPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                // create new PASSWORD
+                Container(
+                  decoration: _shadowBox(),
+                  child: TextField(
+                    controller: newPasswordController,
+                    obscureText: _obscureNewPassword,
+                    style: const TextStyle(fontSize: 14),
+                    cursorColor: const Color(0xFFE3001C),
+                    cursorHeight: 18,
+                    decoration: InputDecoration(
+                      hintText: "Create new password",
+                      hintStyle: const TextStyle(fontSize: 14),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 16,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      suffixIcon: _showPasswordEyee
+                          ? IconButton(
+                              icon: Icon(
+                                _obscureNewPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                size: 22,
+                                color: _obscureNewPassword
+                                    ? Colors.grey
+                                    : const Color(
+                                        0xFFE3001C,
+                                      ), // red when visible
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureNewPassword = !_obscureNewPassword;
+                                });
+                              },
+                            )
+                          : null,
                     ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // re-enter new PASSWORD
+                Container(
+                  decoration: _shadowBox(),
+                  child: TextField(
+                    controller: confirmPasswordController,
+                    obscureText: _obscureConfirmPassword,
+                    style: const TextStyle(fontSize: 14), // <<< MATCH
+                    cursorColor: const Color(0xFFE3001C),
+                    cursorHeight: 18,
+                    decoration: InputDecoration(
+                      hintText: "Re-enter new password",
+                      hintStyle: const TextStyle(fontSize: 14), // <<< MATCH
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 16,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      suffixIcon: _showConfirmPasswordEyee
+                          ? IconButton(
+                              icon: Icon(
+                                _obscureConfirmPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                size: 22,
+                                color: _obscureConfirmPassword
+                                    ? Colors.grey
+                                    : const Color(
+                                        0xFFE3001C,
+                                      ), // red when visible
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureConfirmPassword =
+                                      !_obscureConfirmPassword;
+                                });
+                              },
+                            )
+                          : null,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        _obscureNewPassword = !_obscureNewPassword;
-                      });
+                      if (_isContinueEnabled) {
+                        // Your continue logic here
+                      }
                     },
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Confirm Password Field
-              TextField(
-                controller: confirmPasswordController,
-                obscureText: _obscureConfirmPassword,
-                decoration: InputDecoration(
-                  hintText: "Re-enter new password",
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureConfirmPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _isContinueEnabled
+                          ? const Color(0xFFE3001B) // red when enabled
+                          : const Color(0xFFFF9CA7), // gray when disabled
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE3001B),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                    child: const Text(
+                      "Continue",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                  child: const Text(
-                    "Continue",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              Row(
-                children: [
-                  Checkbox(
-                    value: keepMeLoggedIn,
-                    onChanged: (value) {
-                      setState(() {
-                        keepMeLoggedIn = value!;
-                      });
-                    },
-                  ),
-                  const Text("Keep me login"),
-                ],
-              ),
-            ],
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center, // centers the row
+                  children: [
+                    Checkbox(
+                      value: keepMeLoggedIn,
+                      onChanged: (value) {
+                        setState(() {
+                          keepMeLoggedIn = value!;
+                        });
+                      },
+                      side: const BorderSide(
+                        color: Color(0xFF717171), // border color
+                        width: 1.5, // thin border
+                      ),
+                      fillColor: MaterialStateProperty.resolveWith<Color>((
+                        Set<MaterialState> states,
+                      ) {
+                        if (states.contains(MaterialState.selected)) {
+                          return const Color(0xFFE3001B); // red when checked
+                        }
+                        return Colors.white; // background when unchecked
+                      }),
+                      checkColor: Colors.white, // color of the check icon
+                    ),
+                    const SizedBox(
+                      width: 0,
+                    ), // spacing between checkbox and text
+                    const Text(
+                      "Keep me login",
+                      style: TextStyle(
+                        color: Color(0xFF575757),
+                        fontSize: 14.85,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }
 
 void main() {
@@ -543,5 +646,21 @@ void main() {
       home: ResetPasswordPage(),
       debugShowCheckedModeBanner: false,
     ),
+  );
+}
+
+// Shadow Box style
+BoxDecoration _shadowBox() {
+  return BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.grey.withOpacity(0.3),
+        spreadRadius: 1,
+        blurRadius: 6,
+        offset: const Offset(0, 3),
+      ),
+    ],
   );
 }
