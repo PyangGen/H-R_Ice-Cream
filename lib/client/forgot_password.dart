@@ -497,7 +497,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     : Icons.visibility_outlined,
                                 size: 22,
                                 color: _obscureNewPassword
-                                    ? Colors.grey
+                                    ? const Color(
+                                        0xFF565656,
+                                      )
                                     : const Color(
                                         0xFFE3001C,
                                       ), // red when visible
@@ -545,7 +547,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     : Icons.visibility_outlined,
                                 size: 22,
                                 color: _obscureConfirmPassword
-                                    ? Colors.grey
+                                    ? const Color(
+                                        0xFF565656,
+                                      )
                                     : const Color(
                                         0xFFE3001C,
                                       ), // red when visible

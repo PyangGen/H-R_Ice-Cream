@@ -418,20 +418,24 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
     );
   }
 
-  Widget _disabledField(String value) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      decoration: _boxDecoration(color: Colors.grey.shade200),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          value,
-          style: const TextStyle(fontSize: 15, color: Colors.grey),
-        ),
+Widget _disabledField(String value) {
+  return Container(
+    height: 48,
+    padding: const EdgeInsets.symmetric(horizontal: 15),
+    decoration: BoxDecoration(
+      color: Colors.grey.shade200,
+      borderRadius: BorderRadius.circular(12), // optional
+      border: Border.all(color: Colors.transparent, width: 0), // removes border
+    ),
+    child: Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        value,
+        style: const TextStyle(fontSize: 15, color: Colors.grey),
       ),
-    );
-  }
+    ),
+  );
+}
 
   // ------------------ UPDATED DROPDOWN ------------------
   Widget _dropdown(

@@ -127,7 +127,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                           ],
                         ),
 
-                        const Divider(height: 30),
+                        const Divider(height: 20),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -268,7 +268,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 5),
+                              SizedBox(height: 15),
 
                               Row(
                                 children: [

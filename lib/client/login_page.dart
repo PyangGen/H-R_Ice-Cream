@@ -255,7 +255,7 @@ class _LoginPageState extends State<LoginPage> {
                       // Login Button
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 55,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -296,7 +296,7 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 30),
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 55,
                         child: OutlinedButton(
                           onPressed: () {},
                           style: OutlinedButton.styleFrom(
@@ -309,10 +309,10 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               Image.asset(
                                 'lib/client/images/CL_page/google.png',
-                                height: 28,
-                                width: 28,
+                                height: 32,
+                                width: 32,
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 15),
                               const Text(
                                 'Sign In with Google',
                                 style: TextStyle(

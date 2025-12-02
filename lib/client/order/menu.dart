@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ice_cream/client/order/cart.dart';
 import 'package:ice_cream/client/order/deliverTracker.dart';
-import 'package:ice_cream/client/order/manageAdress.dart';
+import 'package:ice_cream/client/order/manage_address.dart';
 import 'package:intl/intl.dart';
 
 class MenuPage extends StatefulWidget {
@@ -143,80 +144,84 @@ class _MenuPageState extends State<MenuPage> {
                   : const SizedBox()),
         flexibleSpace: showCheckout
             ? SafeArea(
-  child: Padding(
-    padding: const EdgeInsets.symmetric(
-      horizontal: 15,
-      vertical: 0,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Brand Text with margin only
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 9,
-            left: 10,
-          ), // for the whole column
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Move H&R slightly right
-              Padding(
-                padding: const EdgeInsets.only(left: 15), // move H&R right
-                child: Text(
-                  "H&R",
-                  style: TextStyle(
-                    fontFamily: "NationalPark",
-                    fontSize: 23,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0,
-                    color: Color(0xFFE3001B),
-                  ),
-                ),
-              ),
-              // Move ICE CREAM up slightly
-              Transform.translate(
-                offset: const Offset(0, -8), // move up by 3 pixels
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 13),
-                  child: Text(
-                    "ICE CREAM",
-                    style: TextStyle(
-                      fontFamily: "NationalPark",
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFFE3001B),
-                    ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Brand Text with margin only
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 9,
+                          left: 10,
+                        ), // for the whole column
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Move H&R slightly right
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 15,
+                              ), // move H&R right
+                              child: Text(
+                                "H&R",
+                                style: TextStyle(
+                                  fontFamily: "NationalPark",
+                                  fontSize: 23,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0,
+                                  color: Color(0xFFE3001B),
+                                ),
+                              ),
+                            ),
+                            // Move ICE CREAM up slightly
+                            Transform.translate(
+                              offset: const Offset(
+                                0,
+                                -8,
+                              ), // move up by 3 pixels
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 13),
+                                child: Text(
+                                  "ICE CREAM",
+                                  style: TextStyle(
+                                    fontFamily: "NationalPark",
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFE3001B),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 5,
+                        ), // move left little bit
+                        child: GestureDetector(
+                          onTap: () => setState(() => showCheckout = false),
+                          child: Container(
+                            height: 42,
+                            width: 42,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFF2F2F2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.close, size: 22),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.only(
-            right: 5,
-          ), // move left little bit
-          child: GestureDetector(
-            onTap: () => setState(() => showCheckout = false),
-            child: Container(
-              height: 42,
-              width: 42,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF2F2F2),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.close, size: 22),
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-)
-
+              )
             : null,
         leadingWidth: 43, // ensures AppBar doesn't shrink the leading slot
         leading: showCheckout
@@ -265,7 +270,14 @@ class _MenuPageState extends State<MenuPage> {
                   ),
                   child: IconButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CartPage(),
+                        ),
+                      );
+                    },
                     icon: Image.asset(
                       "lib/client/favorite/images/shopping_cart.png",
                       height: 20,
@@ -1151,7 +1163,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.only(
+          left: 20, // horizontal padding
+          right: 20, // horizontal padding
+          bottom: 10, // vertical padding only at bottom
+        ), // horizontal margin
+
         child: GestureDetector(
           onTap: () {
             // Add the same action as Confirm Order
@@ -1501,135 +1518,135 @@ class _CheckoutPageState extends State<CheckoutPage> {
   // -----------------------------
   // --- Components
   // -----------------------------
-Widget _buildSection({
-  String? title,
-  String? trailing,
-  required Widget child,
-}) {
-  bool isAddress = title == "Address details";
+  Widget _buildSection({
+    String? title,
+    String? trailing,
+    required Widget child,
+  }) {
+    bool isAddress = title == "Address details";
 
-  // Titles that must move up
-  final bool moveUpTitles =
-      title == "Delivery schedule" ||
-      title == "Products Ordered" ||
-      title == "Payment Method";
+    // Titles that must move up
+    final bool moveUpTitles =
+        title == "Delivery schedule" ||
+        title == "Products Ordered" ||
+        title == "Payment Method";
 
-  // Correct font-weight logic
-  FontWeight getFontWeight(String? txt) {
-    if (txt == "Payment Method") return FontWeight.w500; // REGULAR
-    if (txt == "Delivery schedule" || txt == "Products Ordered")
-      return FontWeight.w700; // BOLD
-    return FontWeight.w700;
-  }
+    // Correct font-weight logic
+    FontWeight getFontWeight(String? txt) {
+      if (txt == "Payment Method") return FontWeight.w500; // REGULAR
+      if (txt == "Delivery schedule" || txt == "Products Ordered")
+        return FontWeight.w700; // BOLD
+      return FontWeight.w700;
+    }
 
-  return Container(
-    // Horizontal margin set to 20 for all sections
-    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-    // Padding: 10 for address, 15 for everything else including delivery schedule
-    padding: EdgeInsets.all(isAddress ? 10 : 15),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(8),
-      border: isAddress
-          ? const Border(top: BorderSide(color: Color(0xFFE3001B), width: 8))
-          : null,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(.05),
-          blurRadius: 5,
-          offset: const Offset(0, 3),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (title != null)
-          Transform.translate(
-            offset: moveUpTitles ? const Offset(0, -8) : Offset.zero,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    if (isAddress)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Image.asset(
-                          "lib/client/order/images/location_on.png",
-                          width: 20,
-                          height: 20,
-                        ),
-                      ),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 13.59,
-                        fontWeight: getFontWeight(title),
-                        color: isAddress
-                            ? const Color(0xFFE3001B)
-                            : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                if (trailing != null)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => ManageAddressPage()),
-                        );
-                      },
-                      child: Text(
-                        trailing,
-                        style: const TextStyle(
-                          color: Color(0xFF0D6EFD),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+    return Container(
+      // Horizontal margin set to 20 for all sections
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      // Padding: 10 for address, 15 for everything else including delivery schedule
+      padding: EdgeInsets.all(isAddress ? 10 : 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: isAddress
+            ? const Border(top: BorderSide(color: Color(0xFFE3001B), width: 8))
+            : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.05),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
           ),
-
-        // Dotted line only for Address
-        if (isAddress) ...[
-          const SizedBox(height: 10),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              double dotWidth = 4.1;
-              double spacing = 4;
-              int count =
-                  (constraints.maxWidth / (dotWidth + spacing)).floor();
-
-              return Row(
-                children: List.generate(
-                  count,
-                  (_) => Container(
-                    width: dotWidth,
-                    height: 1,
-                    margin: EdgeInsets.only(right: spacing),
-                    color: const Color(0xFFB2B2B2),
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 12),
         ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title != null)
+            Transform.translate(
+              offset: moveUpTitles ? const Offset(0, -8) : Offset.zero,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      if (isAddress)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: Image.asset(
+                            "lib/client/order/images/location_on.png",
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 13.59,
+                          fontWeight: getFontWeight(title),
+                          color: isAddress
+                              ? const Color(0xFFE3001B)
+                              : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (trailing != null)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ManageAddressPage(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          trailing,
+                          style: const TextStyle(
+                            color: Color(0xFF0D6EFD),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
 
-        child,
-      ],
-    ),
-  );
-}
+          // Dotted line only for Address
+          if (isAddress) ...[
+            const SizedBox(height: 10),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                double dotWidth = 4.1;
+                double spacing = 4;
+                int count = (constraints.maxWidth / (dotWidth + spacing))
+                    .floor();
 
+                return Row(
+                  children: List.generate(
+                    count,
+                    (_) => Container(
+                      width: dotWidth,
+                      height: 1,
+                      margin: EdgeInsets.only(right: spacing),
+                      color: const Color(0xFFB2B2B2),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          child,
+        ],
+      ),
+    );
+  }
 
   // -----------------------------
   // Date Picker
@@ -1641,7 +1658,21 @@ Widget _buildSection({
           context: context,
           firstDate: DateTime.now(),
           lastDate: DateTime(2030),
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: const ColorScheme.light(
+                  primary: Color(0xFFE3001B), // header color
+                  onPrimary: Colors.white, // header text color
+                  surface: Colors.white, // <-- CALENDAR BACKGROUND WHITE
+                  onSurface: Colors.black, // text color
+                ),
+              ),
+              child: child!,
+            );
+          },
         );
+
         if (date != null) {
           setState(() => selectedDate = date);
         }
@@ -1657,7 +1688,7 @@ Widget _buildSection({
             const Icon(
               Icons.calendar_month,
               size: 20,
-              color: Color(0xFF777777), // gray color
+              color: Color(0xFF777777),
             ),
             const SizedBox(width: 12),
             Text(
@@ -1671,7 +1702,8 @@ Widget _buildSection({
       ),
     );
   }
-/* Widget _datePicker() {
+
+  /* Widget _datePicker() {
   return InkWell(
     onTap: () async {
       DateTime? date = await showDatePicker(
@@ -1799,7 +1831,50 @@ Widget _buildSection({
         TimeOfDay? time = await showTimePicker(
           context: context,
           initialTime: TimeOfDay.now(),
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: const ColorScheme.light(
+                  primary: Color(0xFFE3001B),
+                  onPrimary: Colors.white,
+                  surface: Colors.white,
+                  onSurface: Colors.black,
+                ),
+
+                // ⭐ AM / PM style FIX (compatible with older Flutter)
+                timePickerTheme: TimePickerThemeData(
+                  dayPeriodShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: const BorderSide(
+                      color: Color(0xFFE3001B), // border red
+                      width: 1.5,
+                    ),
+                  ),
+
+                  // Background color for AM/PM (unselected / selected)
+                  dayPeriodColor: MaterialStateColor.resolveWith((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return const Color(0xFFE3001B); // selected red
+                    }
+                    return Colors.white; // unselected white
+                  }),
+
+                  // Text color for AM/PM (unselected / selected)
+                  dayPeriodTextColor: MaterialStateColor.resolveWith((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return Colors.white; // selected white text
+                    }
+                    return Colors.black; // unselected black text
+                  }),
+                ),
+
+                dialogBackgroundColor: Colors.white,
+              ),
+              child: child!,
+            );
+          },
         );
+
         if (time != null) setState(() => selectedTime = time);
       },
       child: Container(
@@ -1810,12 +1885,8 @@ Widget _buildSection({
         ),
         child: Row(
           children: [
-            const Icon(
-              Icons.access_time,
-              size: 20,
-              color: Color(0xFF777777), // gray color
-            ),
-            const SizedBox(width: 20), // spacing to move text right
+            const Icon(Icons.access_time, size: 20, color: Color(0xFF777777)),
+            const SizedBox(width: 20),
             Text(
               selectedTime == null ? "00:00 --" : selectedTime!.format(context),
               style: const TextStyle(fontSize: 14),

@@ -212,7 +212,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                       // BUTTON CREATE
                       SizedBox(
-                        height: 50,
+                        height: 55,
                         child: ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
@@ -248,7 +248,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                       // GOOGLE BUTTON
                       SizedBox(
-                        height: 50,
+                        height: 55,
                         child: OutlinedButton(
                           onPressed: () {},
                           style: OutlinedButton.styleFrom(
@@ -261,10 +261,10 @@ class _SignUpPageState extends State<SignUpPage> {
                             children: [
                               Image.asset(
                                 'lib/client/images/CL_page/google.png',
-                                height: 28,
-                                width: 28,
+                                height: 32,
+                                width: 32,
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 15),
                               const Text(
                                 "Sign Up with Google",
                                 style: TextStyle(
@@ -278,7 +278,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 47),
+                      const SizedBox(height: 37),
 
                       // Login Link
                       Row(

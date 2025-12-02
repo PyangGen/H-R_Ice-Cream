@@ -7,12 +7,22 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
- 
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LandingPage(),
+
+      // 🔥 Add theme to change cursor + selection handle color
+      theme: ThemeData(
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Color(0xFFE3001C),            // Cursor
+          selectionColor: Color(0x33E3001C),         // Text highlight
+          selectionHandleColor: Color(0xFFE3001C),   // Teardrop handle
+        ),
+      ),
+
+      home: const LandingPage(),
     );
   }
 }

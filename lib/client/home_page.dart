@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ice_cream/client/favorite/favorite.dart';
 import 'package:ice_cream/client/messages/messages.dart';
+import 'package:ice_cream/client/order/cart.dart';
 import 'package:ice_cream/client/order/menu.dart';
+import 'package:ice_cream/client/profile/profile.dart';
 import 'order/all.dart'; // Adjust path if needed
 
 class HomePage extends StatefulWidget {
@@ -130,23 +132,46 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CircleAvatar(
-                    radius: 21,
-                    backgroundImage: AssetImage(
-                      "lib/client/images/home_page/profile.png",
+                  // Profile with onPressed (onTap)
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfilePage(),
+                        ),
+                      );
+                    },
+                    child: const CircleAvatar(
+                      radius: 21,
+                      backgroundImage: AssetImage(
+                        "lib/client/profile/images/prof.png",
+                      ),
                     ),
                   ),
-                  Container(
-                    height: 43,
-                    width: 43,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF2F2F2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.shopping_cart,
-                      color: Color(0xFFE3001B),
-                      size: 22,
+
+                  // Shopping cart with onPressed (onTap)
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CartPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 43,
+                      width: 43,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF2F2F2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.shopping_cart,
+                        color: Color(0xFFE3001B),
+                        size: 22,
+                      ),
                     ),
                   ),
                 ],
