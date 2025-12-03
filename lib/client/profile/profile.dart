@@ -881,35 +881,36 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
                 const SizedBox(height: 220),
 
-             SizedBox(
-  width: double.infinity,
-  height: 55,
-  child: ElevatedButton(
-    onPressed: () {
-      if (_isContinueEnabled) {
-        // Your continue logic here
-      }
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: _isContinueEnabled
-          ? const Color(0xFF007CFF) // blue enabled
-          : const Color(0xFF0061C7), // darker blue disabled
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
-      ),
-    ),
-    child: Text(
-      "Change password",
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: _isContinueEnabled
-            ? Colors.white        // when 0xFF007CFF
-            : const Color(0xFFA7A7A7), // when 0xFF0061C7
-      ),
-    ),
-  ),
-),
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_isContinueEnabled) {
+                        // Your continue logic here
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _isContinueEnabled
+                          ? const Color(0xFF007CFF) // blue enabled
+                          : const Color(0xFF0061C7), // darker blue disabled
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Text(
+                      "Change password",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: _isContinueEnabled
+                            ? Colors
+                                  .white // when 0xFF007CFF
+                            : const Color(0xFFA7A7A7), // when 0xFF0061C7
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -939,8 +940,6 @@ BoxDecoration _shadowBox() {
     ),
   );
 }
-
-
 
 class DeleteAccount extends StatefulWidget {
   const DeleteAccount({super.key});
@@ -1007,60 +1006,62 @@ class _DeleteAccountState extends State<DeleteAccount> {
 
               const Text(
                 "If you need to delete an account and you're prompted to provide a reason.",
-                style: TextStyle(fontSize: 15, color: Color(0xFF1C1B1F), fontWeight: FontWeight.w400),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xFF1C1B1F),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
 
               const SizedBox(height: 20),
 
               /// --- REASON OPTIONS ---
-            Expanded(
-              
-  child: ListView.builder(
-    itemCount: reasons.length,
-    itemBuilder: (context, index) {
-      bool isSelected = selectedReason == reasons[index];
-      return Container(
-        margin: const EdgeInsets.only(bottom: 7),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: ListTile(
-          minLeadingWidth: 7,
-
-          leading: Container(
-            width: 15,
-            height: 15,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFF434343),
-                width: 1,
-              ),
-            ),
-            child: isSelected
-                ? Center(
-                    child: Container(
-                      width: 7, // inner dot
-                      height: 7,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFF434343),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: reasons.length,
+                  itemBuilder: (context, index) {
+                    bool isSelected = selectedReason == reasons[index];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 7),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                  )
-                : null,
-          ),
-          title: Text(reasons[index]),
-          onTap: () {
-            setState(() => selectedReason = reasons[index]);
-          },
-        ),
-      );
-    },
-  ),
-),
+                      child: ListTile(
+                        minLeadingWidth: 7,
 
+                        leading: Container(
+                          width: 15,
+                          height: 15,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF434343),
+                              width: 1,
+                            ),
+                          ),
+                          child: isSelected
+                              ? Center(
+                                  child: Container(
+                                    width: 7, // inner dot
+                                    height: 7,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(0xFF434343),
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+                        title: Text(reasons[index]),
+                        onTap: () {
+                          setState(() => selectedReason = reasons[index]);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
 
               /// --- CONTINUE BUTTON ---
               SizedBox(
@@ -1076,8 +1077,6 @@ class _DeleteAccountState extends State<DeleteAccount> {
                   child: const Text("Continue"),
                 ),
               ),
-
-           
             ],
           ),
         ),

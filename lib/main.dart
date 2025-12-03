@@ -16,9 +16,9 @@ class MyApp extends StatelessWidget {
       // 🔥 Add theme to change cursor + selection handle color
       theme: ThemeData(
         textSelectionTheme: const TextSelectionThemeData(
-          cursorColor: Color(0xFFE3001C),            // Cursor
-          selectionColor: Color(0x33E3001C),         // Text highlight
-          selectionHandleColor: Color(0xFFE3001C),   // Teardrop handle
+          cursorColor: Colors.black,            // Cursor
+          selectionColor: Colors.black,         // Text highlight
+          selectionHandleColor: Colors.black,   // Teardrop handle
         ),
       ),
 

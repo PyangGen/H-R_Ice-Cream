@@ -19,16 +19,42 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   bool _showConfirmPasswordEye = false;
-
   bool _showPasswordEye = false;
+  bool _firstError = false;
+  bool _lastError = false;
+  bool _emailError = false;
+  bool _passwordError = false;
+  bool _confirmPasswordError = false;
+  final FocusNode _focusNodeFirst = FocusNode();
+  final FocusNode _focusNodeLast = FocusNode();
+  final FocusNode _focusNodeEmail = FocusNode();
+  final FocusNode _focusNodePassword = FocusNode();
+  final FocusNode _focusNodeConfirmPassword = FocusNode();
+  @override
+  void dispose() {
+    _focusNodeFirst.dispose();
+    _focusNodeLast.dispose();
+    _focusNodeEmail.dispose();
+    _focusNodePassword.dispose();
+    _focusNodeConfirmPassword.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
 
+    // Show/hide eye for Confirm Password
     _confirmPasswordController.addListener(() {
       setState(() {
         _showConfirmPasswordEye = _confirmPasswordController.text.isNotEmpty;
+      });
+    });
+
+    // Show/hide eye for Create Password
+    _passwordController.addListener(() {
+      setState(() {
+        _showPasswordEye = _passwordController.text.isNotEmpty;
       });
     });
   }
@@ -103,109 +129,88 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(height: 20),
 
                       // --- First Name + Last Name Row ---
+                      // --- First Name + Last Name Row ---
                       Row(
                         children: [
                           Expanded(
-                            child: _buildInput("First Name", _firstController),
+                            child: _buildInput(
+                              "First Name",
+                              _firstController,
+                              _firstError,
+                              (v) => setState(() => _firstError = v),
+                              _firstBorderColor,
+                              (color) =>
+                                  setState(() => _firstBorderColor = color),
+                              focusNode: _focusNodeFirst,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: _buildInput("Last Name", _lastController),
+                            child: _buildInput(
+                              "Last Name",
+                              _lastController,
+                              _lastError,
+                              (v) => setState(() => _lastError = v),
+                              _lastBorderColor,
+                              (color) =>
+                                  setState(() => _lastBorderColor = color),
+                              focusNode: _focusNodeLast,
+                            ),
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 16),
 
-                      // EMAIL
-                      _buildInput("Email Address", _emailController),
-                      const SizedBox(height: 16),
-
-                      // PASSWORD
-                      Container(
-                        decoration: _shadowBox(),
-                        child: TextField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          style: const TextStyle(fontSize: 14), // <<< MATCH
-                          cursorColor: const Color(0xFFE3001C),
-                          cursorHeight: 18,
-                          decoration: InputDecoration(
-                            hintText: "Create Password",
-                            hintStyle: const TextStyle(
-                              fontSize: 14,
-                            ), // <<< MATCH
-                            filled: true,
-                            fillColor: Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 16,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            suffixIcon: _showPasswordEye
-                                ? IconButton(
-                                    icon: Icon(
-                                      _obscurePassword
-                                          ? Icons.visibility_off_outlined
-                                          : Icons.visibility_outlined,
-                                      size: 22,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _obscurePassword = !_obscurePassword;
-                                      });
-                                    },
-                                  )
-                                : null,
-                          ),
-                        ),
+                      // --- Email Address ---
+                      _buildInput(
+                        "Email Address",
+                        _emailController,
+                        _emailError,
+                        (v) => setState(() => _emailError = v),
+                        _emailBorderColor,
+                        (color) => setState(() => _emailBorderColor = color),
+                        focusNode: _focusNodeEmail,
                       ),
+
+                      const SizedBox(height: 16),
+                      // --- Create Password ---
+                      _buildInput(
+                        "Create Password",
+                        _passwordController,
+                        _passwordError,
+                        (v) => setState(() => _passwordError = v),
+                        _passwordBorderColor,
+                        (color) => setState(() => _passwordBorderColor = color),
+                        obscureText: _obscurePassword,
+                        showSuffixIcon: _showPasswordEye,
+                        onSuffixIconTap: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                        focusNode: _focusNodePassword,
+                      ),
+
                       const SizedBox(height: 16),
 
-                      // CONFIRM PASSWORD
-                      Container(
-                        decoration: _shadowBox(),
-                        child: TextField(
-                          controller: _confirmPasswordController,
-                          obscureText: _obscureConfirmPassword,
-                          style: const TextStyle(fontSize: 14), // <<< MATCH
-                          cursorColor: const Color(0xFFE3001C),
-                          cursorHeight: 18,
-                          decoration: InputDecoration(
-                            hintText: "Confirm Password",
-                            hintStyle: const TextStyle(
-                              fontSize: 14,
-                            ), // <<< MATCH
-                            filled: true,
-                            fillColor: Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 16,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            suffixIcon: _showConfirmPasswordEye
-                                ? IconButton(
-                                    icon: Icon(
-                                      _obscureConfirmPassword
-                                          ? Icons.visibility_off_outlined
-                                          : Icons.visibility_outlined,
-                                      size: 22,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _obscureConfirmPassword =
-                                            !_obscureConfirmPassword;
-                                      });
-                                    },
-                                  )
-                                : null,
-                          ),
-                        ),
+                      // --- Confirm Password ---
+                      _buildInput(
+                        "Confirm Password",
+                        _confirmPasswordController,
+                        _confirmPasswordError,
+                        (v) => setState(() => _confirmPasswordError = v),
+                        _confirmPasswordBorderColor,
+                        (color) =>
+                            setState(() => _confirmPasswordBorderColor = color),
+                        obscureText: _obscureConfirmPassword,
+                        showSuffixIcon: _showConfirmPasswordEye,
+                        onSuffixIconTap: () {
+                          setState(() {
+                            _obscureConfirmPassword = !_obscureConfirmPassword;
+                          });
+                        },
+                        focusNode: _focusNodeConfirmPassword,
                       ),
 
                       const SizedBox(height: 20),
@@ -214,7 +219,50 @@ class _SignUpPageState extends State<SignUpPage> {
                       SizedBox(
                         height: 55,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              // FIRST NAME
+                              _firstError = _firstController.text.isEmpty;
+                              _firstBorderColor = _firstError
+                                  ? const Color(0xFFE3001C)
+                                  : _firstBorderColor;
+
+                              // LAST NAME
+                              _lastError = _lastController.text.isEmpty;
+                              _lastBorderColor = _lastError
+                                  ? const Color(0xFFE3001C)
+                                  : _lastBorderColor;
+
+                              // EMAIL
+                              _emailError = _emailController.text.isEmpty;
+                              _emailBorderColor = _emailError
+                                  ? const Color(0xFFE3001C)
+                                  : _emailBorderColor;
+
+                              // PASSWORD
+                              _passwordError = _passwordController.text.isEmpty;
+                              _passwordBorderColor = _passwordError
+                                  ? const Color(0xFFE3001C)
+                                  : _passwordBorderColor;
+
+                              // CONFIRM PASSWORD
+                              _confirmPasswordError =
+                                  _confirmPasswordController.text.isEmpty;
+                              _confirmPasswordBorderColor =
+                                  _confirmPasswordError
+                                  ? const Color(0xFFE3001C)
+                                  : _confirmPasswordBorderColor;
+                            });
+
+                            // Proceed if all valid
+                            if (!_firstError &&
+                                !_lastError &&
+                                !_emailError &&
+                                !_passwordError &&
+                                !_confirmPasswordError) {
+                              // action
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFE3001C),
                             shape: RoundedRectangleBorder(
@@ -332,28 +380,117 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildInput(String hint, TextEditingController controller) {
-    return Container(
-      decoration: _shadowBox(),
-      child: TextField(
-        controller: controller,
-        cursorColor: const Color(0xFFE3001C),
-        cursorHeight: 18,
-        style: const TextStyle(fontSize: 14),
-        decoration: InputDecoration(
-          hintText: hint,
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
+  Widget _buildInput(
+    String label,
+    TextEditingController controller,
+    bool errorFlag,
+    Function(bool) onErrorChange,
+    Color borderColor,
+    Function(Color) onBorderChange, {
+    bool obscureText = false,
+    VoidCallback? onSuffixIconTap, // new
+    bool showSuffixIcon = false, // new
+    FocusNode? focusNode,
+  }) {
+    focusNode ??= FocusNode();
+
+    focusNode.addListener(() {
+      if (focusNode!.hasFocus && !errorFlag) {
+        onBorderChange(const Color(0xFF4F4F4F));
+      } else if (!focusNode.hasFocus && !errorFlag && controller.text.isEmpty) {
+        onBorderChange(const Color(0xFFFAFAFA));
+      }
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16.0,
-            horizontal: 16,
+          child: TextField(
+            focusNode: focusNode,
+            controller: controller,
+            obscureText: obscureText,
+            style: const TextStyle(fontSize: 14),
+            cursorColor: const Color(0xFFE3001C),
+            cursorHeight: 18,
+            onChanged: (text) {
+              if (errorFlag && text.isNotEmpty) {
+                onErrorChange(false);
+              }
+              onBorderChange(const Color(0xFF4F4F4F));
+            },
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: const TextStyle(
+                fontSize: 14.27,
+                color: Color(0xFF727272),
+              ),
+              floatingLabelStyle: TextStyle(
+                fontSize: 17,
+                color: errorFlag
+                    ? const Color(0xFFE3001C)
+                    : const Color(0xFF4F4F4F),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: errorFlag ? const Color(0xFFE3001C) : borderColor,
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: errorFlag ? const Color(0xFFE3001C) : borderColor,
+                  width: 1,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 16,
+              ),
+              suffixIcon: showSuffixIcon
+                  ? IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: Icon(
+                        obscureText
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        size: 22,
+                      ),
+                      onPressed: onSuffixIconTap,
+                    )
+                  : null,
+            ),
           ),
         ),
-      ),
+        if (errorFlag)
+          const Padding(
+            padding: EdgeInsets.only(top: 4, left: 4),
+            child: Text(
+              "This field is required",
+              style: TextStyle(fontSize: 12, color: Color(0xFFE3001C)),
+            ),
+          ),
+      ],
     );
   }
+
+  Color _firstBorderColor = const Color(0xFFFAFAFA);
+  Color _lastBorderColor = const Color(0xFFFAFAFA);
+  Color _emailBorderColor = const Color(0xFFFAFAFA);
+  Color _passwordBorderColor = const Color(0xFFFAFAFA);
+  Color _confirmPasswordBorderColor = const Color(0xFFFAFAFA);
 }

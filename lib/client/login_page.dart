@@ -14,9 +14,20 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
   bool _showEmailClear = false;
   bool _showPasswordEye = false;
-  bool _obscureEmail = false;
+
+  bool _emailError = false;
+  bool _passwordError = false;
+
+  // Persistent focus nodes
+  final FocusNode _focusNodeEmail = FocusNode();
+  final FocusNode _focusNodePassword = FocusNode();
+
+  // Border colors
+  Color _emailBorderColor = const Color(0xFFFAFAFA);
+  Color _passwordBorderColor = const Color(0xFFFAFAFA);
 
   @override
   void initState() {
@@ -39,6 +50,8 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _focusNodeEmail.dispose();
+    _focusNodePassword.dispose();
     super.dispose();
   }
 
@@ -46,13 +59,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // ensures the screen resizes when keyboard appears
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
-              // ensures scrollable when keyboard is open
               padding: EdgeInsets.only(
                 left: 24,
                 right: 24,
@@ -68,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                       const Spacer(),
                       // Logo
                       Transform.translate(
-                        offset: const Offset(-3, 0), // move left by 5 pixels
+                        offset: const Offset(-3, 0),
                         child: const Text(
                           'H&R',
                           style: TextStyle(
@@ -77,19 +88,14 @@ class _LoginPageState extends State<LoginPage> {
                             fontFamily: "NationalPark",
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0,
-                            height: 0.9, // reduces space below the text
+                            height: 0.9,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      const SizedBox(
-                        height: 1,
-                      ), // smaller spacing between the texts
+                      const SizedBox(height: 1),
                       Transform.translate(
-                        offset: const Offset(
-                          0,
-                          -3,
-                        ), // move ICE CREAM up by 5 pixels
+                        offset: const Offset(0, -3),
                         child: const Text(
                           'ICE CREAM',
                           style: TextStyle(
@@ -102,7 +108,6 @@ class _LoginPageState extends State<LoginPage> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-
                       const SizedBox(height: 40),
                       const Align(
                         alignment: Alignment.centerLeft,
@@ -112,120 +117,40 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Email Field
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              spreadRadius: 1,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          controller: _emailController,
-                          obscureText: _obscureEmail,
-                          style: const TextStyle(fontSize: 14),
-                          cursorColor: Color(0xFFE3001C),
-                          cursorHeight: 18,
-                          decoration: InputDecoration(
-                            hintText: 'Email Address',
-                            hintStyle: const TextStyle(fontSize: 14),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 16.0,
-                              horizontal: 16,
-                            ),
-                            suffixIcon: _showEmailClear
-                                ? Padding(
-                                    padding: const EdgeInsets.only(right: 4),
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      icon: Icon(
-                                        _obscureEmail
-                                            ? Icons.visibility_off_outlined
-                                            : Icons.visibility_outlined,
-                                        size: 22,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscureEmail = !_obscureEmail;
-                                        });
-                                      },
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
+
+                      // Email input
+                      _buildInput(
+                        label: "Email Address",
+                        controller: _emailController,
+                        errorFlag: _emailError,
+                        onErrorChange: (v) => setState(() => _emailError = v),
+                        borderColor: _emailBorderColor,
+                        onBorderChange: (color) =>
+                            setState(() => _emailBorderColor = color),
+                        focusNode: _focusNodeEmail,
+                        showSuffixIcon: _showEmailClear,
+                        obscureText: false,
                       ),
                       const SizedBox(height: 16),
-                      // Password Field
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              spreadRadius: 1,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ), // <<< MATCH EMAIL TEXT SIZE
-                          cursorColor: Color(0xFFE3001C),
-                          cursorHeight: 18,
-                          decoration: InputDecoration(
-                            hintText: 'Password',
-                            hintStyle: const TextStyle(
-                              fontSize: 14,
-                            ), // <<< MATCH EMAIL HINT SIZE
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 16.0,
-                              horizontal: 16,
-                            ),
-                            suffixIcon: _showPasswordEye
-                                ? Padding(
-                                    padding: const EdgeInsets.only(right: 4),
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      icon: Icon(
-                                        _obscurePassword
-                                            ? Icons.visibility_off_outlined
-                                            : Icons.visibility_outlined,
-                                        size: 22,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscurePassword = !_obscurePassword;
-                                        });
-                                      },
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
+
+                      // Password input
+                      _buildInput(
+                        label: "Password",
+                        controller: _passwordController,
+                        errorFlag: _passwordError,
+                        onErrorChange: (v) =>
+                            setState(() => _passwordError = v),
+                        borderColor: _passwordBorderColor,
+                        onBorderChange: (color) =>
+                            setState(() => _passwordBorderColor = color),
+                        focusNode: _focusNodePassword,
+                        showSuffixIcon: _showPasswordEye,
+                        obscureText: _obscurePassword,
+                        onSuffixIconTap: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
                       ),
 
                       const SizedBox(height: 1),
@@ -252,18 +177,26 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 1),
-                      // Login Button
+
+                      // Login button
                       SizedBox(
                         width: double.infinity,
                         height: 55,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const HomePage(),
-                              ),
-                            );
+                            setState(() {
+                              _emailError = _emailController.text.isEmpty;
+                              _passwordError = _passwordController.text.isEmpty;
+                            });
+
+                            if (!_emailError && !_passwordError) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HomePage(),
+                                ),
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFE3001C),
@@ -275,12 +208,13 @@ class _LoginPageState extends State<LoginPage> {
                             'Login',
                             style: TextStyle(
                               fontSize: 16,
-                              color: Color(0xFFFFFFFF),
+                              color: Colors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 30),
                       // Or Sign In with
                       Row(
@@ -358,6 +292,111 @@ class _LoginPageState extends State<LoginPage> {
           },
         ),
       ),
+    );
+  }
+
+  // --- Reusable Input Builder for LoginPage ---
+  Widget _buildInput({
+    required String label,
+    required TextEditingController controller,
+    required bool errorFlag,
+    required Function(bool) onErrorChange,
+    required Color borderColor,
+    required Function(Color) onBorderChange,
+    required FocusNode focusNode,
+    bool obscureText = false,
+    bool showSuffixIcon = false,
+    VoidCallback? onSuffixIconTap,
+  }) {
+    focusNode.addListener(() {
+      if (focusNode.hasFocus && !errorFlag) {
+        onBorderChange(const Color(0xFF4F4F4F)); // dark gray on focus
+      } else if (!focusNode.hasFocus && !errorFlag && controller.text.isEmpty) {
+        onBorderChange(const Color(0xFFFAFAFA)); // light gray when unfocused
+      }
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: TextField(
+            controller: controller,
+            focusNode: focusNode,
+            obscureText: obscureText,
+            style: const TextStyle(fontSize: 14),
+            cursorColor: const Color(0xFFE3001C),
+            cursorHeight: 18,
+            onChanged: (text) {
+              if (errorFlag && text.isNotEmpty) onErrorChange(false);
+              onBorderChange(const Color(0xFF4F4F4F));
+            },
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: const TextStyle(
+                fontSize: 14.27,
+                color: Color(0xFF727272),
+              ),
+              floatingLabelStyle: TextStyle(
+                fontSize: 17,
+                color: errorFlag
+                    ? const Color(0xFFE3001C)
+                    : const Color(0xFF4F4F4F),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: errorFlag ? const Color(0xFFE3001C) : borderColor,
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: errorFlag ? const Color(0xFFE3001C) : borderColor,
+                  width: 1,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 16,
+              ),
+              suffixIcon: showSuffixIcon
+                  ? IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: Icon(
+                        obscureText
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        size: 22,
+                      ),
+                      onPressed: onSuffixIconTap,
+                    )
+                  : null,
+            ),
+          ),
+        ),
+        if (errorFlag)
+          const Padding(
+            padding: EdgeInsets.only(top: 4, left: 4),
+            child: Text(
+              "This field is required.",
+              style: TextStyle(fontSize: 12, color: Color(0xFFE3001C)),
+            ),
+          ),
+      ],
     );
   }
 }
