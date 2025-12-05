@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ice_cream/auth.dart';
+import 'package:ice_cream/client/home_page.dart';
 import 'login_page.dart'; // or the correct file path
 
 class SignUpPage extends StatefulWidget {
@@ -219,50 +222,62 @@ class _SignUpPageState extends State<SignUpPage> {
                       SizedBox(
                         height: 55,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             setState(() {
-                              // FIRST NAME
                               _firstError = _firstController.text.isEmpty;
-                              _firstBorderColor = _firstError
-                                  ? const Color(0xFFE3001C)
-                                  : _firstBorderColor;
-
-                              // LAST NAME
                               _lastError = _lastController.text.isEmpty;
-                              _lastBorderColor = _lastError
-                                  ? const Color(0xFFE3001C)
-                                  : _lastBorderColor;
-
-                              // EMAIL
                               _emailError = _emailController.text.isEmpty;
-                              _emailBorderColor = _emailError
-                                  ? const Color(0xFFE3001C)
-                                  : _emailBorderColor;
-
-                              // PASSWORD
                               _passwordError = _passwordController.text.isEmpty;
-                              _passwordBorderColor = _passwordError
-                                  ? const Color(0xFFE3001C)
-                                  : _passwordBorderColor;
-
-                              // CONFIRM PASSWORD
                               _confirmPasswordError =
                                   _confirmPasswordController.text.isEmpty;
-                              _confirmPasswordBorderColor =
-                                  _confirmPasswordError
-                                  ? const Color(0xFFE3001C)
-                                  : _confirmPasswordBorderColor;
                             });
 
-                            // Proceed if all valid
+                            if (_passwordController.text !=
+                                _confirmPasswordController.text) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Passwords do not match"),
+                                ),
+                              );
+                              return;
+                            }
+
                             if (!_firstError &&
                                 !_lastError &&
                                 !_emailError &&
                                 !_passwordError &&
                                 !_confirmPasswordError) {
-                              // action
+                              try {
+                                await Auth().register(
+                                  firstName: _firstController.text.trim(),
+                                  lastName: _lastController.text.trim(),
+                                  email: _emailController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                );
+
+                                // SUCCESS → go to login
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LoginPage(),
+                                  ),
+                                );
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Account created successfully!",
+                                    ),
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Error: $e")),
+                                );
+                              }
                             }
                           },
+
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFE3001C),
                             shape: RoundedRectangleBorder(
@@ -298,7 +313,21 @@ class _SignUpPageState extends State<SignUpPage> {
                       SizedBox(
                         height: 55,
                         child: OutlinedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+  User? user = await Auth().signInWithGoogle();
+
+  if (user != null) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Google Sign-Up failed")),
+    );
+  }
+},
+
                           style: OutlinedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -423,7 +452,7 @@ class _SignUpPageState extends State<SignUpPage> {
             controller: controller,
             obscureText: obscureText,
             style: const TextStyle(fontSize: 14),
-            cursorColor: const Color(0xFFE3001C),
+
             cursorHeight: 18,
             onChanged: (text) {
               if (errorFlag && text.isNotEmpty) {
@@ -477,11 +506,14 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         if (errorFlag)
-          const Padding(
-            padding: EdgeInsets.only(top: 4, left: 4),
-            child: Text(
-              "This field is required",
-              style: TextStyle(fontSize: 12, color: Color(0xFFE3001C)),
+          Transform.translate(
+            offset: const Offset(0, 6), // moves error text UP by 4px
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
+              child: Text(
+                "This field is required",
+                style: TextStyle(fontSize: 12, color: Color(0xFFE3001C)),
+              ),
             ),
           ),
       ],
