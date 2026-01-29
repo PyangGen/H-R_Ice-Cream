@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ice_cream/client/order/cart.dart';
 import 'package:ice_cream/client/order/deliverTracker.dart';
@@ -17,6 +19,42 @@ class _MenuPageState extends State<MenuPage> {
   String selectedCategory = "Plain Flavors"; // default selected
   int quantity = 0;
   String searchQuery = "";
+
+  // Big image auto slideshow (detail view)
+  final PageController _bigImageController = PageController();
+  Timer? _bigImageTimer;
+  int _bigImageIndex = 0;
+  int _bigImageCount = 0;
+
+  void _stopBigImageAutoSlide() {
+    _bigImageTimer?.cancel();
+    _bigImageTimer = null;
+  }
+
+  void _startBigImageAutoSlide({required int count}) {
+    _bigImageCount = count;
+    _stopBigImageAutoSlide();
+    if (count <= 1) return;
+
+    _bigImageTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted || !_bigImageController.hasClients || _bigImageCount <= 1) {
+        return;
+      }
+      final next = (_bigImageIndex + 1) % _bigImageCount;
+      _bigImageController.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 450),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _stopBigImageAutoSlide();
+    _bigImageController.dispose();
+    super.dispose();
+  }
 
   final List<Map<String, dynamic>> items = [
     {
@@ -101,8 +139,8 @@ class _MenuPageState extends State<MenuPage> {
   final List<String> gallonSizes = [
     "2 gal",
     "3 gal",
+    "3.5 gal",
     "4 gal",
-    "4½ gal",
     "5 gal",
     "7 gal",
   ];
@@ -242,6 +280,7 @@ class _MenuPageState extends State<MenuPage> {
                             quantity = 0;
                             selectedSize = "";
                           });
+                          _stopBigImageAutoSlide();
                         } else {
                           Navigator.pop(context);
                         }
@@ -322,7 +361,7 @@ class _MenuPageState extends State<MenuPage> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
-                    cursorColor: Colors.red,
+                    cursorColor: Colors.black,
                     style: const TextStyle(
                       fontSize: 14.18,
                       color: Color(0xFF848484),
@@ -376,7 +415,18 @@ class _MenuPageState extends State<MenuPage> {
                 final item = filteredItems[index];
                 return GestureDetector(
                   onTap: () {
-                    setState(() => selectedItem = item);
+                    setState(() {
+                      selectedItem = item;
+                      _bigImageIndex = 0;
+                    });
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted) return;
+                      _bigImageController.jumpToPage(0);
+                      // Always run a 2-page slideshow (fallback when big_image_2 is missing),
+                      // matching the "Top Orders" behavior.
+                      _startBigImageAutoSlide(count: 2);
+                    });
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -497,6 +547,24 @@ class _MenuPageState extends State<MenuPage> {
   // ---------------- STRAWBERRY DETAIL PAGE -------------
   // -----------------------------------------------------
   Widget buildStrawberryDetail() {
+    const fallbackBig = "lib/client/order/images/sbB.png";
+    final img1 = selectedItem?["big_image"];
+    final img2 = selectedItem?["big_image_2"];
+    final bigImages = <String>[
+      (img1 is String && img1.isNotEmpty) ? img1 : fallbackBig,
+      (img2 is String && img2.isNotEmpty) ? img2 : fallbackBig,
+    ];
+
+    // Keep timer in sync with available images.
+    if (_bigImageCount != bigImages.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _bigImageIndex = 0;
+        _bigImageController.jumpToPage(0);
+        _startBigImageAutoSlide(count: bigImages.length);
+      });
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -518,22 +586,46 @@ class _MenuPageState extends State<MenuPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 0),
+                            const SizedBox(height: 10),
                             // IMAGE WITH HEART ICON
                             Stack(
                               children: [
+                                // Slideshow for big images
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(25),
-                                  child: Image.asset(
-                                    selectedItem?["big_image"] ??
-                                        "lib/client/order/images/sbB.png",
-                                    height: 315,
+                                  child: SizedBox(
+                                    height: 280,
                                     width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    filterQuality: FilterQuality.high,
+                                    child: NotificationListener<ScrollNotification>(
+                                      onNotification: (notification) {
+                                        if (notification is ScrollStartNotification) {
+                                          _stopBigImageAutoSlide();
+                                        } else if (notification is ScrollEndNotification) {
+                                          _startBigImageAutoSlide(count: bigImages.length);
+                                        }
+                                        return false;
+                                      },
+                                      child: PageView.builder(
+                                        controller: _bigImageController,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount: bigImages.length,
+                                        onPageChanged: (i) =>
+                                            setState(() => _bigImageIndex = i),
+                                        itemBuilder: (context, i) {
+                                          return Image.asset(
+                                            bigImages[i],
+                                            height: 280,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            filterQuality: FilterQuality.high,
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
                                 ),
 
+                                // Favorite icon remains in the same spot
                                 Positioned(
                                   top: 26,
                                   right: 14,
@@ -553,15 +645,49 @@ class _MenuPageState extends State<MenuPage> {
                               ],
                             ),
 
-                            const SizedBox(height: 6),
+                            // Page indicator (outside the image)
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(bigImages.length, (i) {
+                                final isActive = i == _bigImageIndex;
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  width: isActive ? 18 : 6,
+                                  height: 7,
+                                  decoration: BoxDecoration(
+                                    color: isActive
+                                        ? const Color(0xFFE3001B) // active
+                                        : const Color(0xFFC7C7C7), // inactive
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                );
+                              }),
+                            ),
+
+                            const SizedBox(height: 3),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   selectedItem!["name"],
                                   style: const TextStyle(
                                     fontSize: 23.2,
                                     fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                // Category is wrapped with extra bottom padding
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 3),
+                                  child: Text(
+                                    selectedItem!["category"],
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xFF898989),
+                                    ),
                                   ),
                                 ),
                                 Row(
@@ -583,7 +709,7 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             const Text(
                               "Select Gallon size:",
                               style: TextStyle(
@@ -592,7 +718,7 @@ class _MenuPageState extends State<MenuPage> {
                                 color: Color(0xFF505050),
                               ),
                             ),
-                            const SizedBox(height: 14),
+                            const SizedBox(height: 12),
                             Wrap(
                               spacing: 8,
                               runSpacing: 10,
@@ -626,7 +752,7 @@ class _MenuPageState extends State<MenuPage> {
                                 );
                               }).toList(),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 15),
                             const Text(
                               "Quantity",
                               style: TextStyle(
@@ -883,6 +1009,14 @@ class _MenuPageState extends State<MenuPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Text("GALLON", style: TextStyle(fontSize: 13)),
+                      Text("₱200"),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       Text("DELIVERY FEE", style: TextStyle(fontSize: 13)),
                       Text("0"),
                     ],
@@ -893,14 +1027,14 @@ class _MenuPageState extends State<MenuPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "TOTAL PAYMENT",
+                        "SUBTOTAL",
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       Text(
-                        "\$100.00",
+                        "₱100.00",
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
@@ -908,7 +1042,7 @@ class _MenuPageState extends State<MenuPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 10),
                 ],
               ),
             ),

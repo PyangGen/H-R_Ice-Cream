@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ice_cream/client/login_page.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -92,12 +93,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                   child: TextField(
                     controller: emailController,
-                    cursorColor: const Color(0xFFE3001B), // cursor color
-                    cursorHeight: 18, // height of the cursor
-                    cursorWidth: 2, // width of the cursor
-                    cursorRadius: const Radius.circular(
-                      2,
-                    ), // rounded ends for a subtle tear effect
+                    cursorColor: Colors.black,
+                    cursorHeight: 18,
+                    cursorWidth: 2,
+                    cursorRadius: const Radius.circular(3),
                     decoration: InputDecoration(
                       hintText: "Email address",
                       hintStyle: const TextStyle(
@@ -339,7 +338,7 @@ class _OTPcodeState extends State<OTPcode> {
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
         maxLength: 1,
-        cursorColor: const Color(0xFFE3001B), // 🔴 cursor color
+        cursorColor: Colors.black,
         cursorHeight: 18, // make it taller
         cursorWidth: 2, // thicker than default
         cursorRadius: const Radius.circular(3), // rounded edges → “tear” shape
@@ -474,8 +473,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     controller: newPasswordController,
                     obscureText: _obscureNewPassword,
                     style: const TextStyle(fontSize: 14),
-                    cursorColor: const Color(0xFFE3001C),
+                    cursorColor: Colors.black,
                     cursorHeight: 18,
+                    cursorWidth: 2,
+                    cursorRadius: const Radius.circular(3),
                     decoration: InputDecoration(
                       hintText: "Create new password",
                       hintStyle: const TextStyle(fontSize: 14),
@@ -497,9 +498,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     : Icons.visibility_outlined,
                                 size: 22,
                                 color: _obscureNewPassword
-                                    ? const Color(
-                                        0xFF565656,
-                                      )
+                                    ? const Color(0xFF565656)
                                     : const Color(
                                         0xFFE3001C,
                                       ), // red when visible
@@ -524,8 +523,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     controller: confirmPasswordController,
                     obscureText: _obscureConfirmPassword,
                     style: const TextStyle(fontSize: 14), // <<< MATCH
-                    cursorColor: const Color(0xFFE3001C),
+                    cursorColor: Colors.black,
                     cursorHeight: 18,
+                    cursorWidth: 2,
+                    cursorRadius: const Radius.circular(3),
                     decoration: InputDecoration(
                       hintText: "Re-enter new password",
                       hintStyle: const TextStyle(fontSize: 14), // <<< MATCH
@@ -547,9 +548,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                     : Icons.visibility_outlined,
                                 size: 22,
                                 color: _obscureConfirmPassword
-                                    ? const Color(
-                                        0xFF565656,
-                                      )
+                                    ? const Color(0xFF565656)
                                     : const Color(
                                         0xFFE3001C,
                                       ), // red when visible
@@ -574,16 +573,23 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_isContinueEnabled) {
-                        // Your continue logic here
+                        // Navigate to CongratPage
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CongratsPage(),
+                          ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _isContinueEnabled
                           ? const Color(0xFFE3001B) // red when enabled
-                          : const Color(0xFFFF9CA7), // gray when disabled
+                          : const Color(0xFFFF9CA7), // pink when "disabled"
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
+                      elevation: 0,
                     ),
                     child: const Text(
                       "Continue",
@@ -668,3 +674,106 @@ BoxDecoration _shadowBox() {
     ],
   );
 }
+
+class CongratsPage extends StatelessWidget {
+  const CongratsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF005AE6),
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: size.height, // 👈 keeps portrait layout intact
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // ✅ SUCCESS IMAGE
+                  Image.asset(
+                    'lib/client/images/CL_page/create_success.jpg',
+                    width: 376,
+                    height: 376,
+                  ),
+
+                 
+
+                  // ✅ TEXT
+                  Column(
+                    children: const [
+                      Text(
+                        'Your password has been',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        'changed successfully!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 130),
+
+                  // ✅ LOGIN BUTTON
+                  SizedBox(
+                    width: 170,
+                    height: 57,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF005AE6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                          side: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Back to login',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30), // bottom spacing for scroll
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

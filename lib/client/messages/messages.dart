@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ice_cream/client/favorite/favorite.dart';
 import 'package:ice_cream/client/home_page.dart';
 import 'package:ice_cream/client/order/all.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -171,12 +172,24 @@ class _MessagesPageState extends State<MessagesPage> {
                       time: "4 hours ago",
                     ),
                     const SizedBox(height: 10),
-                    messageCard(
-                      icon: Icons.person,
-                      name: "+63 9123456789",
-                      message: "Good day! Ma’am, I’m on at location.",
-                      time: "5 hours ago",
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const ChatPage(phoneNumber: '+639123456789'),
+                          ),
+                        );
+                      },
+                      child: messageCard(
+                        icon: Icons.person,
+                        name: "+63 9123456789",
+                        message: "Good day! Ma’am, I’m on at location.",
+                        time: "5 hours ago",
+                      ),
                     ),
+
                     const SizedBox(height: 10),
                     messageCard(
                       icon: Icons.person,
@@ -195,7 +208,8 @@ class _MessagesPageState extends State<MessagesPage> {
                     messageCard(
                       icon: Icons.person,
                       name: "+63 9123456789",
-                      message: "Good day! Ma’am, I’m on at location. Are you there?",
+                      message:
+                          "Good day! Ma’am, I’m on at location. Are you there?",
                       time: "5 hours ago",
                     ),
                     const SizedBox(height: 10),
@@ -416,191 +430,189 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   Widget messageCard({
-  required IconData icon,
-  required String name,
-  required String message,
-  required String time,
-}) {
-  // Determine image path, size, and padding based on icon
-  String imagePath;
-  double imageWidth;
-  double imageHeight;
-  double containerPadding;
+    required IconData icon,
+    required String name,
+    required String message,
+    required String time,
+  }) {
+    // Determine image path, size, and padding based on icon
+    String imagePath;
+    double imageWidth;
+    double imageHeight;
+    double containerPadding;
 
-  if (icon == Icons.person) {
-    imagePath = 'lib/client/messages/images/person.png';
-    imageWidth = 18;
-    imageHeight = 18;
-    containerPadding = 14; // smaller circle for person
-  } else {
-    imagePath = 'lib/client/messages/images/nest_mini.png';
-    imageWidth = 24;
-    imageHeight = 24;
-    containerPadding = 12; // bigger circle for support agent
-  }
+    if (icon == Icons.person) {
+      imagePath = 'lib/client/messages/images/person.png';
+      imageWidth = 18;
+      imageHeight = 18;
+      containerPadding = 14; // smaller circle for person
+    } else {
+      imagePath = 'lib/client/messages/images/nest_mini.png';
+      imageWidth = 24;
+      imageHeight = 24;
+      containerPadding = 12; // bigger circle for support agent
+    }
 
-  return Container(
-    padding: const EdgeInsets.all(15),
-    decoration: BoxDecoration(
-      color: const Color(0xFFFFFFFF),
-      borderRadius: BorderRadius.circular(11),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Image inside circle
-        Transform.translate(
-          offset: const Offset(-4, 0),
-          child: Container(
-            padding: EdgeInsets.all(containerPadding),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFE7EA),
-              shape: BoxShape.circle,
-            ),
-            child: Image.asset(
-              imagePath,
-              width: imageWidth,
-              height: imageHeight,
-              fit: BoxFit.contain,
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(11),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image inside circle
+          Transform.translate(
+            offset: const Offset(-4, 0),
+            child: Container(
+              padding: EdgeInsets.all(containerPadding),
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFE7EA),
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset(
+                imagePath,
+                width: imageWidth,
+                height: imageHeight,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 10),
+          const SizedBox(width: 10),
 
-        // Message container
-        Expanded(
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Transform.translate(
-                offset: const Offset(0, -4),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 7),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 0),
-                      Text(
-                        message,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF1C1B1F),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: -3,
-                right: 0,
-                child: Text(
-                  time,
-                  style: const TextStyle(fontSize: 12, color: Colors.black45),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget notificationCard({
-  required String message,
-  required String time,
-  bool isFirst = false,
-}) {
-  return Container(
-    padding: const EdgeInsets.all(15),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(11),
-      boxShadow: isFirst
-          ? [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.10),
-                blurRadius: 12,
-                spreadRadius: 1,
-                offset: const Offset(0, 4),
-              ),
-            ]
-          : [],
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Transform.translate(
-          offset: const Offset(-4, 0),
-          child: Container(
-            padding: const EdgeInsets.all(14),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFE7EA),
-              shape: BoxShape.circle,
-            ),
-            child: Image.asset(
-              'lib/client/messages/images/notifications_active.png',
-              width: 24,
-              height: 24,
-            ),
-          ),
-        ),
-
-        const SizedBox(width: 10),
-
-        // FIXED PART: Column instead of Stack
-        Expanded(
-          child: SizedBox(
-            height: 52, // fixed consistent height for all notifications
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Message container
+          Expanded(
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                // message
-                Expanded(
-                  child: Text(
-                    message,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF1C1B1F),
-                      fontWeight: FontWeight.w500,
+                Transform.translate(
+                  offset: const Offset(0, -4),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 7),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 0),
+                        Text(
+                          message,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF1C1B1F),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-
-                // time always bottom-right
-                Align(
-                  alignment: Alignment.bottomRight,
+                Positioned(
+                  bottom: -3,
+                  right: 0,
                   child: Text(
                     time,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.black45,
-                    ),
+                    style: const TextStyle(fontSize: 12, color: Colors.black45),
                   ),
-                )
+                ),
               ],
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
   }
 
+  Widget notificationCard({
+    required String message,
+    required String time,
+    bool isFirst = false,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(11),
+        boxShadow: isFirst
+            ? [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.10),
+                  blurRadius: 12,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Transform.translate(
+            offset: const Offset(-4, 0),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFE7EA),
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset(
+                'lib/client/messages/images/notifications_active.png',
+                width: 24,
+                height: 24,
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
+          // FIXED PART: Column instead of Stack
+          Expanded(
+            child: SizedBox(
+              height: 52, // fixed consistent height for all notifications
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // message
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF1C1B1F),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+
+                  // time always bottom-right
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      time,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black45,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _BottomIcon extends StatelessWidget {
   final IconData? icon;
@@ -648,6 +660,282 @@ class _BottomIcon extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ChatPage extends StatelessWidget {
+  final String phoneNumber;
+  const ChatPage({super.key, required this.phoneNumber});
+
+  static const double avatarRadius = 22; // Match all to the AppBar avatar
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFAFAFA), // ✅ PAGE BACKGROUND
+      // Custom AppBar moved lower below status bar, as if "appbar is part of the body" (not using Scaffold appBar)
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Simulates the AppBar, but inside the body and further down.
+            const SizedBox(
+              height: 26,
+            ), // Add extra space to move appbar further downward
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 3),
+                    child: IconButton(
+                      icon: const Icon(
+                        Symbols.arrow_back_ios,
+                        size: 22,
+                        weight: 400,
+                        color: Colors.black,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  const SizedBox(width: 0),
+                  const CircleAvatar(
+                    radius: avatarRadius,
+                    backgroundColor: Color(0xFFFFE5E5),
+                    child: Icon(
+                      Symbols.person,
+                      color: Color(0xFFE3001B),
+                      size: 21,
+                      fill: 1, // ✅ filled
+                      weight: 700, // ✅ bold
+                    ),
+                  ),
+
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        phoneNumber,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Text(
+                        'Unknown',
+                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment
+                                      .center, // ✅ avatar + bubble same line
+                                  children: [
+                                    const CircleAvatar(
+                                      radius: avatarRadius,
+                                      backgroundColor: Color(0xFFFFE5E5),
+                                      child: Icon(
+                                        Symbols.person,
+                                        color: Color(0xFFE3001B),
+                                        size: 21,
+                                        fill: 1, // ✅ filled
+                                        weight: 700, // ✅ bold
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+
+                                    // ✅ bubble
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 22,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFEAEAEA),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Good day! Ma’am I’m at location.",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                // ✅ time below bubble only (padded to start under bubble)
+                                const SizedBox(height: 6),
+                                const Padding(
+                                  padding: EdgeInsets.only(
+                                    left: (avatarRadius * 2) + 10,
+                                  ), // avatar diameter + gap
+                                  child: Text(
+                                    "12:30 pm",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Color(0xFF1C1B1F),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 22,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFE3001B),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Okay! On the way.",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const CircleAvatar(
+                                      radius: avatarRadius,
+                                      backgroundColor: Color(0xFFFFE5E5),
+                                      child: Icon(
+                                        Symbols.person,
+                                         color: Color(0xFFE3001B) ,
+                                        size: 21,
+                                        fill: 1, // ✅ filled
+                                        weight: 700, // ✅ bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 6),
+                                const Padding(
+                                  padding: EdgeInsets.only(
+                                    right: (avatarRadius * 2) + 10,
+                                  ),
+                                  child: Text(
+                                    "12:31 pm",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                       color: Color(0xFF1C1B1F),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // MESSAGE INPUT (moved up a little with bottom padding removed and top padding added)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 0, left: 0, right: 0, bottom: 3),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              style: const TextStyle(
+                                fontSize: 15,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: "Message",
+                                hintStyle: const TextStyle(
+                                  color: Color(0xFF464646),
+                                  fontSize: 15,
+                                ),
+                                filled: true,
+                                fillColor: const Color(0xFFF1F1F1),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 14,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: () {},
+                            child: const CircleAvatar(
+                              radius: 24,
+                              backgroundColor: Color(0xFFE3001B),
+                              child: Icon(
+                                Symbols.send,
+                                color: Colors.white,
+                                size: 22,
+                                weight: 600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

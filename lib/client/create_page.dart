@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ice_cream/auth.dart';
+import 'package:ice_cream/client/forgot_password.dart';
 import 'package:ice_cream/client/home_page.dart';
 import 'login_page.dart'; // or the correct file path
+import 'dart:async';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -255,19 +257,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                   password: _passwordController.text.trim(),
                                 );
 
-                                // SUCCESS → go to login
+                                // DIRECT TO OTP PAGE (no success message)
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => const LoginPage(),
-                                  ),
-                                );
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "Account created successfully!",
-                                    ),
+                                    builder: (_) => const OTPcode(),
                                   ),
                                 );
                               } catch (e) {
@@ -277,7 +271,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               }
                             }
                           },
-
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFE3001C),
                             shape: RoundedRectangleBorder(
@@ -294,6 +287,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 30),
 
                       // DIVIDER
@@ -314,19 +308,23 @@ class _SignUpPageState extends State<SignUpPage> {
                         height: 55,
                         child: OutlinedButton(
                           onPressed: () async {
-  User? user = await Auth().signInWithGoogle();
+                            User? user = await Auth().signInWithGoogle();
 
-  if (user != null) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const HomePage()),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Google Sign-Up failed")),
-    );
-  }
-},
+                            if (user != null) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const HomePage(),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Google Sign-Up failed"),
+                                ),
+                              );
+                            }
+                          },
 
                           style: OutlinedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -355,7 +353,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 37),
+                      const SizedBox(height: 7),
 
                       // Login Link
                       Row(
@@ -452,8 +450,10 @@ class _SignUpPageState extends State<SignUpPage> {
             controller: controller,
             obscureText: obscureText,
             style: const TextStyle(fontSize: 14),
-
+            cursorColor: Colors.black,
             cursorHeight: 18,
+            cursorWidth: 2,
+            cursorRadius: const Radius.circular(3),
             onChanged: (text) {
               if (errorFlag && text.isNotEmpty) {
                 onErrorChange(false);
@@ -525,4 +525,379 @@ class _SignUpPageState extends State<SignUpPage> {
   Color _emailBorderColor = const Color(0xFFFAFAFA);
   Color _passwordBorderColor = const Color(0xFFFAFAFA);
   Color _confirmPasswordBorderColor = const Color(0xFFFAFAFA);
+}
+
+class OTPcode extends StatefulWidget {
+  const OTPcode({super.key});
+
+  @override
+  State<OTPcode> createState() => _OTPcodeState();
+}
+
+class _OTPcodeState extends State<OTPcode> {
+  List<String> otp = ["", "", "", ""]; // store OTP digits
+
+  bool get isFilled =>
+      otp.every((digit) => digit.isNotEmpty); // check if all boxes are filled
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset:
+          true, // allows the body to resize when keyboard shows
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              // BACK BUTTON
+              Align(
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    width: 43,
+                    height: 43,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF2F2F2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 150),
+              const Text(
+                "Enter OTP Code",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1C1C1C),
+                ),
+              ),
+              const SizedBox(height: 8),
+              RichText(
+                textAlign: TextAlign.center,
+                text: const TextSpan(
+                  text: "We sent code to ",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF505050),
+                    fontWeight: FontWeight.normal,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: "example@gmail.com",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF1C1B1F),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 50),
+
+              /// OTP INPUT BOXES
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(4, (index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: _otpBox(index),
+                  );
+                }),
+              ),
+              const SizedBox(height: 30),
+
+              /// CONTINUE BUTTON
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: isFilled
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const VerifyPage(),
+                            ),
+                          );
+                        }
+                      : null, // disable button when not filled
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>((
+                      states,
+                    ) {
+                      if (isFilled) {
+                        return const Color(0xFFE3001B); // active color
+                      }
+                      return const Color(0xFFFF9CA7); // disabled color
+                    }),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    elevation: MaterialStateProperty.all(0),
+                  ),
+                  child: const Text(
+                    "Continue",
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 35),
+
+              /// RESEND OTP
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text("Didn’t get OTP? ", style: TextStyle(fontSize: 14.85)),
+                  Text(
+                    "Resend OTP",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFFE3001B),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _otpBox(int index) {
+    return Container(
+      width: 60,
+      height: 65,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.10),
+            blurRadius: 18,
+            spreadRadius: 2,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: TextField(
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.number,
+        maxLength: 1,
+        cursorColor: Colors.black,
+        cursorHeight: 18, // make it taller
+        cursorWidth: 2, // thicker than default
+        cursorRadius: const Radius.circular(3), // rounded edges → “tear” shape
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        decoration: const InputDecoration(
+          counterText: "",
+          border: InputBorder.none,
+        ),
+        onChanged: (value) {
+          setState(() => otp[index] = value);
+
+          if (value.isNotEmpty && index < 3) {
+            FocusScope.of(context).nextFocus();
+          } else if (value.isEmpty && index > 0) {
+            FocusScope.of(context).previousFocus();
+          }
+        },
+      ),
+    );
+  }
+}
+
+class VerifyPage extends StatefulWidget {
+  const VerifyPage({super.key});
+
+  @override
+  State<VerifyPage> createState() => _VerifyPageState();
+}
+
+class _VerifyPageState extends State<VerifyPage> {
+  int _dotCount = 0;
+  Timer? _dotTimer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Animated dots
+    _dotTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      setState(() {
+        _dotCount = (_dotCount + 1) % 4;
+      });
+    });
+
+    // Simulate verification (short loading)
+    Future.delayed(const Duration(seconds: 2), () {
+      _dotTimer?.cancel();
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const CongratPage()),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _dotTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String dots = '.' * _dotCount;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Verifying$dots',
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF102864),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Please wait',
+              style: TextStyle(fontSize: 15, color: Color(0xFF1C1B1F)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CongratPage extends StatelessWidget {
+  const CongratPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: height, // 👈 keeps portrait layout unchanged
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 80),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // ✅ SUCCESS IMAGE
+                  Image.asset(
+                    'lib/client/images/CL_page/success_account.png',
+                    width: 376,
+                    height: 296.13,
+                  ),
+
+                  // ✅ TEXT
+                  Column(
+                    children: const [
+                      Text(
+                        'Congratulations!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF102864),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'You have successfully created your',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF1C1B1F),
+                        ),
+                      ),
+                      Text(
+                        'account',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF1C1B1F),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 100),
+
+                  // ✅ LOGIN BUTTON
+                  SizedBox(
+                    width: 290,
+                    height: 59,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF102864),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30), // 👈 prevents bottom cut-off
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

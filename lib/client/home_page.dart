@@ -21,6 +21,12 @@ class _HomePageState extends State<HomePage> {
 
   int index = 0;
   bool forward = true;
+bool isMobile(BuildContext context) => MediaQuery.of(context).size.width < 600;
+bool isTablet(BuildContext context) =>
+    MediaQuery.of(context).size.width >= 600 &&
+    MediaQuery.of(context).size.width < 1024;
+bool isDesktop(BuildContext context) =>
+    MediaQuery.of(context).size.width >= 1024;
 
   final TextEditingController _searchController = TextEditingController();
   String searchText = "";
@@ -204,7 +210,7 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: TextField(
                         controller: _searchController,
-                        cursorColor: const Color(0xFFE3001C),
+                        cursorColor: Colors.black,
                         cursorHeight: 18,
                         onChanged: (value) {
                           setState(() => searchText = value);
@@ -248,63 +254,76 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 8),
 
-                    // SLIDER
-                    Transform.translate(
-                      offset: const Offset(0, -3),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: SizedBox(
-                              height: 180,
-                              width: 376,
-                              child: NotificationListener<ScrollNotification>(
-                                onNotification: (notification) {
-                                  if (notification is ScrollStartNotification) {
-                                    _stopAutoSlide();
-                                  }
-                                  return false;
-                                },
-                                child: PageView.builder(
-                                  controller: _pageController,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: topImages.length,
-                                  itemBuilder: (context, i) {
-                                    return Image.asset(
-                                      topImages[i],
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 5,
-                            right: 15,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Color(0xFFE3001B),
-                                minimumSize: const Size(95, 35),
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              onPressed: () {},
-                              child: const Text(
-                                "Order Now",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                   // SLIDER (RESPONSIVE)
+Transform.translate(
+  offset: const Offset(0, -3),
+  child: LayoutBuilder(
+    builder: (context, constraints) {
+      double width = constraints.maxWidth;                     // full available width
+      double height = width * 0.42;                            // responsive height
+      if (height < 170) height = 170;                          // minimum height
+      if (height > 300) height = 300;                          // max height for desktop
+
+      return Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(isMobile(context) ? 20 : 28),
+            child: SizedBox(
+              height: height,
+              width: width,
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  if (notification is ScrollStartNotification) {
+                    _stopAutoSlide();
+                  }
+                  return false;
+                },
+                child: PageView.builder(
+                  controller: _pageController,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: topImages.length,
+                  itemBuilder: (context, i) {
+                    return Image.asset(
+                      topImages[i],
+                      width: width,
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          // ORDER NOW BUTTON
+          Positioned(
+            bottom: 10,
+            right: 15,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFFE3001B),
+                minimumSize: Size(isMobile(context) ? 95 : 120,
+                    isMobile(context) ? 35 : 45),
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(isMobile(context) ? 30 : 40),
+                ),
+              ),
+              onPressed: () {},
+              child: Text(
+                "Order Now",
+                style: TextStyle(
+                  fontSize: isMobile(context) ? 13 : 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  ),
+),
 
                     // FLAVORS TITLE
                     Transform.translate(
@@ -344,31 +363,67 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    // FLAVORS CARDS (SEARCH FILTERED)
-                    Transform.translate(
-                      offset: const Offset(0, -10),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: filteredFlavors.isEmpty
-                              ? [
-                                  const Text(
-                                    "No result found",
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ]
-                              : filteredFlavors.map((item) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 12),
-                                    child: _flavorCard(
-                                      item["title"]!,
-                                      item["img"]!,
-                                    ),
-                                  );
-                                }).toList(),
-                        ),
-                      ),
+                    // FLAVORS (RESPONSIVE)
+Transform.translate(
+  offset: const Offset(0, -10),
+  child: LayoutBuilder(
+    builder: (context, constraints) {
+      double width = constraints.maxWidth;
+
+      bool isMobile = width < 600;
+      int gridCount =
+          width >= 1000 ? 4 : width >= 800 ? 3 : width >= 600 ? 2 : 1;
+
+      // MOBILE → horizontal scroll
+      if (isMobile) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: filteredFlavors.isEmpty
+                ? [
+                    const Text(
+                      "No result found",
+                      style: TextStyle(fontSize: 14),
                     ),
+                  ]
+                : filteredFlavors.map((item) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: _flavorCard(
+                        item["title"]!,
+                        item["img"]!,
+                        width: 155,
+                      ),
+                    );
+                  }).toList(),
+          ),
+        );
+      }
+
+      // WEB/TABLET → GRID
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: filteredFlavors.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: gridCount,
+          crossAxisSpacing: 15,
+          mainAxisSpacing: 15,
+          childAspectRatio: 0.78,
+        ),
+        itemBuilder: (context, index) {
+          final item = filteredFlavors[index];
+          return _flavorCard(
+            item["title"]!,
+            item["img"]!,
+            width: 200, // Web/tablet card wider
+          );
+        },
+      );
+    },
+  ),
+),
+
 
                     // WE RECOMMEND TITLE
                     Transform.translate(
@@ -383,31 +438,33 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    // RECOMMEND CARDS (SEARCH FILTERED)
-                    Transform.translate(
-                      offset: const Offset(0, 2),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: filteredRecommends.isEmpty
-                              ? [
-                                  const Text(
-                                    "No result found",
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ]
-                              : filteredRecommends.map((item) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 12),
-                                    child: _recommendCard(
-                                      item["title"]!,
-                                      item["img"]!,
-                                    ),
-                                  );
-                                }).toList(),
-                        ),
-                      ),
-                    ),
+                   // RECOMMEND CARDS (SEARCH FILTERED)
+Transform.translate(
+  offset: const Offset(0, 2),
+  child: SizedBox(
+    height: 90,
+    child: filteredRecommends.isEmpty
+        ? const Center(
+            child: Text(
+              "No result found",
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          )
+        : ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: filteredRecommends.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final item = filteredRecommends[index];
+              return _recommendCard(
+                item["title"]!,
+                item["img"]!,
+              );
+            },
+          ),
+  ),
+),
+
                   ],
                 ),
               ),
@@ -420,116 +477,137 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _flavorCard(String title, String img) {
-    return Container(
-      width: 155,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 5,
-            offset: const Offset(1, 3),
+  Widget _flavorCard(String title, String img, {double width = 155}) {
+  return Container(
+    width: width,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.shade200,
+          blurRadius: 6,
+          offset: const Offset(1, 3),
+        ),
+      ],
+    ),
+    padding: const EdgeInsets.all(10),
+    child: Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: Image.asset(
+            img,
+            height: width * 0.45,
+            width: double.infinity,
+            fit: BoxFit.cover,
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Image.asset(
-              img,
-              height: 80,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
           ),
-          const SizedBox(height: 6),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 6),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.star, color: Colors.amber, size: 14),
+            Icon(Icons.star, color: Colors.amber, size: 14),
+            Icon(Icons.star, color: Colors.amber, size: 14),
+            Icon(Icons.star, color: Colors.amber, size: 14),
+            Icon(Icons.star_border, size: 14),
+          ],
+        ),
+        const SizedBox(height: 6),
+        const Text(
+          "\$ 100",
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+        ),
+      ],
+    ),
+  );
+}
+Widget _recommendCard(String title, String img) {
+  return Container(
+    width: 180,
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 6,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            img,
+            height: 55,
+            width: 55,
+            fit: BoxFit.cover,
           ),
-          const SizedBox(height: 4),
-          const Row(
+        ),
+        const SizedBox(width: 10),
+
+        // TEXT CONTENT
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.star, color: Colors.amber, size: 14),
-              Icon(Icons.star, color: Colors.amber, size: 14),
-              Icon(Icons.star, color: Colors.amber, size: 14),
-              Icon(Icons.star, color: Colors.amber, size: 14),
-              Icon(Icons.star_border, size: 14),
+              // TITLE
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              const SizedBox(height: 4),
+
+              // STARS
+              const Row(
+                children: [
+                  Icon(Icons.star, color: Colors.amber, size: 12),
+                  Icon(Icons.star, color: Colors.amber, size: 12),
+                  Icon(Icons.star, color: Colors.amber, size: 12),
+                  Icon(Icons.star_half, color: Colors.amber, size: 12),
+                ],
+              ),
+
+              const SizedBox(height: 4),
+
+              // PRICE
+              const Text(
+                "₱120",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 4),
-          const Text(
-            "\$ 100",
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
-  Widget _recommendCard(String title, String img) {
-    return Container(
-      width: 180,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 5,
-            offset: Offset(1, 3),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.asset(img, height: 51, width: 50, fit: BoxFit.cover),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 11,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                const Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.amber, size: 10),
-                    Icon(Icons.star, color: Colors.amber, size: 10),
-                    Icon(Icons.star, color: Colors.amber, size: 10),
-                    Icon(Icons.star_half, color: Colors.amber, size: 10),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  "\$ 120",
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _bottomNavBar() {
     return Card(

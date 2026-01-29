@@ -564,6 +564,22 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                           onTap: () {
                             if (isProcessingTab && leftText == "Cancel") {
                               showCancelOrderDialog(context);
+                              return;
+                            }
+
+                            if (leftText == "Rate") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => RateOrderPage(
+                                    imageAsset: img,
+                                    itemName: name,
+                                    status: 'Delivered',
+                                    price: price,
+                                    dateTimeLabel: 'Today, 12:30 PM',
+                                  ),
+                                ),
+                              );
                             }
                           },
                           child: Container(
@@ -683,6 +699,290 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       ),
     );
   }
+
+  // ---------------- RATE ORDER PAGE ----------------
+}
+
+class RateOrderPage extends StatefulWidget {
+  const RateOrderPage({
+    super.key,
+    required this.imageAsset,
+    required this.itemName,
+    required this.price,
+    this.status = 'Delivered',
+    this.dateTimeLabel = 'Today, 12:30 PM',
+  });
+
+  final String imageAsset;
+  final String itemName;
+  final String price;
+  final String status;
+  final String dateTimeLabel;
+
+  @override
+  State<RateOrderPage> createState() => _RateOrderPageState();
+}
+
+class _RateOrderPageState extends State<RateOrderPage> {
+  int _rating = 0; // start with no selection (all gray)
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      // The continue button is now pushed even closer to the absolute bottom
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () => Navigator.pop(context),
+                        borderRadius: BorderRadius.circular(999),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFFF3F3F3),
+                          ),
+                          child: const Icon(Icons.close, color: Colors.black),
+                        ),
+                      ),
+                      const Expanded(
+                        child: Center(
+                          child: Text(
+                            'Rate your order',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 40), // keep title centered
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 28),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(999),
+                                child: Image.asset(
+                                  widget.imageAsset,
+                                  width: 54,
+                                  height: 54,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      widget.dateTimeLabel,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF5B5B5B),
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      widget.itemName,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  widget.status,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF5B5B5B),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  widget.price,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 18),
+                        const Divider(height: 1, thickness: 1.3, color: Color(0xFFD2D2D2)),
+                        const SizedBox(height: 22),
+                        const Text(
+                          'How was the ice cream?',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700, 
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Please rate the store.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF5B5B5B),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(5, (index) {
+                              final value = index + 1;
+                              double availableWidth = constraints.maxWidth - 36; // account for padding
+                              double starSize = (availableWidth / 5).clamp(34.0, 58.0);
+
+                              Color starColor;
+                              IconData starIcon;
+
+                              if (_rating == 0) {
+                                starIcon = Icons.star_rate;
+                                starColor = const Color(0xFFD9D9D9);
+                              } else {
+                                if (value <= _rating) {
+                                  starIcon = Icons.star_rate;
+                                  starColor = const Color(0xFFFFD900);
+                                } else {
+                                  starIcon = Icons.star_rate;
+                                  starColor = const Color(0xFFD9D9D9);
+                                }
+                              }
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                child: GestureDetector(
+                                  onTap: () => setState(() => _rating = value),
+                                  child: Icon(
+                                    starIcon,
+                                    size: starSize,
+                                    color: starColor,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                        const SizedBox(height: 38),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF3F3F3),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: const Color(0xFFC7C7C7)),
+                          ),
+                          child: TextField(
+                            controller: _messageController,
+                            maxLines: 6,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Message here',
+                              hintStyle: TextStyle(
+                                color: Color(0xFF8C8C8C),
+                                fontSize: 14,
+                              ),
+                            ),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 26),
+                        // The continue button is no longer here!
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        // Reduce the minimum padding to move the button even closer to the very bottom.
+        minimum: EdgeInsets.zero,
+        // Remove internal padding, only leave spacing at the left/right, and minimal bottom.
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 2, 18, 12), // less space at bottom/top
+          child: SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () {
+                // TODO: Submit rating/message if needed.
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE3001B),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                elevation: 0,
+                padding: EdgeInsets.zero,
+              ),
+              child: const Text(
+                'Continue',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _BottomIcon extends StatelessWidget {
@@ -737,125 +1037,344 @@ class _BottomIcon extends StatelessWidget {
 }
 
 Future<void> showCancelOrderDialog(BuildContext context) {
+  final otherReasonController = TextEditingController();
+
   return showDialog(
     context: context,
     barrierDismissible: true,
-    builder: (context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.23),
-        ),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 30),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Updated image instead of X icon
-              Container(
-                padding: const EdgeInsets.all(1),
+    builder: (dialogContext) {
+      String? selectedReason;
 
-                child: Image.asset(
-                  "lib/client/order/images/cancel.png",
-                  width: 34,
-                  height: 34,
-                  fit: BoxFit.contain,
-                ),
+      final reasons = <String>[
+        'Changed my mind',
+        'Ordered by mistake',
+        'Want to update or change my order',
+        'Payment issue (e.g., failed)',
+        'Others (Please specify)',
+      ];
+
+      // Height of each default reason tile (for uniformity)
+      const double defaultOptionHeight = 45;
+
+      Widget reasonTile(String text, void Function(void Function()) setState) {
+        final isSelected = selectedReason == text;
+        // Special handling for "Others (Please specify)"
+        if (text == 'Others (Please specify)') {
+          return InkWell(
+            onTap: () => setState(() => selectedReason = text),
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              height: !isSelected ? defaultOptionHeight : null,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F3F3), // #F3F3F3
+                borderRadius: BorderRadius.circular(10),
+                // NO border here for "Others" box
               ),
-
-              const SizedBox(height: 10),
-
-              const Text(
-                "Cancel Order?",
-                style: TextStyle(fontSize: 19.85, fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 8),
-
-              const Text(
-                "Are you sure you want to cancel this order?",
-                softWrap: false,
-                maxLines: 1,
-                overflow: TextOverflow.visible,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13.23,
-                  color: Color(0xFF5B5B5B),
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-
-              const SizedBox(height: 25),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // No, cancel button
-                  SizedBox(
-                    width: 118.75,
-                    height: 43.43,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF969696)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+              child: !isSelected
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 14,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected
+                                  ? const Color(0xFF2F80ED)
+                                  : const Color(0xFF828282),
+                              width: 1,
+                            ),
+                          ),
+                          child: isSelected
+                              ? Center(
+                                  child: Container(
+                                    width: 7,
+                                    height: 7,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(0xFF2F80ED),
+                                    ),
+                                  ),
+                                )
+                              : null,
                         ),
-                      ),
-                      child: const Text(
-                        "No, cancel",
-                        style: TextStyle(
-                          fontSize: 14.26,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF434343),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  SizedBox(
-                    width: 118.75,
-                    height: 43.43,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Close the cancel dialog first
-                        Navigator.pop(context);
-
-                        // Then show the success dialog
-                        showSuccessDialog(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE3001B),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Center(
-                        child: const Text(
-                          "Yes, I'm sure",
-                          softWrap: false,
-                          maxLines: 1,
-                          overflow: TextOverflow.visible,
-                          style: TextStyle(
-                            fontSize: 14.26,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            text,
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF5B5B5B),
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 14,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? const Color(0xFF2F80ED)
+                                      : const Color(0xFF828282),
+                                  width: 1,
+                                ),
+                              ),
+                              child: isSelected
+                                  ? Center(
+                                      child: Container(
+                                        width: 7,
+                                        height: 7,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color(0xFF2F80ED),
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                text,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF5B5B5B),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE9E9E9), // New background color for box
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: const Color(0xFFC4C4C4)), // New border color
+                            ),
+                            child: TextField(
+                              controller: otherReasonController,
+                              maxLines: 4,
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.all(12),
+                                isCollapsed: true,
+                                border: InputBorder.none,
+                                hintText: 'Write your message here',
+                                hintStyle: TextStyle(
+                                  color: Color(0xFF5B5B5B),
+                                  fontSize: 11,
+                                ),
+                              ),
+                              style: const TextStyle(
+                                color: Color(0xFF434343),
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          );
+        }
+        // All other reasons (default)
+        return InkWell(
+          onTap: () => setState(() => selectedReason = text),
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            height: defaultOptionHeight,
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F3F3),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 14,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected
+                          ? const Color(0xFF2F80ED)
+                          : const Color(0xFF828282),
+                      width: 1,
                     ),
                   ),
-                ],
-              ),
-            ],
+                  child: isSelected
+                      ? Center(
+                          child: Container(
+                            width: 7,
+                            height: 7,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFF2F80ED),
+                            ),
+                          ),
+                        )
+                      : null,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    text,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF5B5B5B),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        );
+      }
+
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Dialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.23),
+            ),
+            insetPadding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.78,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Top image (red X)
+                      Padding(
+                        padding: const EdgeInsets.all(1),
+                        child: Image.asset(
+                          "lib/client/order/images/cancel.png",
+                          width: 34,
+                          height: 34,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      const Text(
+                        "Cancel Order?",
+                        style: TextStyle(
+                          fontSize: 19.85,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      const Text(
+                        "Are you sure you want to cancel this order?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13.23,
+                          color: Color(0xFF5B5B5B),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Reason options
+                      ...reasons.expand((r) sync* {
+                        yield reasonTile(r, setState);
+                        yield const SizedBox(height: 10);
+                      }),
+
+                     
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 118.75,
+                            height: 43.43,
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.pop(dialogContext),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Color(0xFF969696)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                "No, cancel",
+                                style: TextStyle(
+                                  fontSize: 14.26,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFF434343),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          SizedBox(
+                            width: 118.75,
+                            height: 43.43,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(dialogContext);
+                                showSuccessDialog(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFE3001B),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: EdgeInsets.zero,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Yes, I'm sure",
+                                  softWrap: false,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.visible,
+                                  style: TextStyle(
+                                    fontSize: 14.26,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       );
     },
-  );
+  ).whenComplete(otherReasonController.dispose);
 }
 
 Future<void> showSuccessDialog(BuildContext context) {

@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _showEmailClear = false;
   bool _showPasswordEye = false;
+  bool _obscureEmail = false; // email is not hidden by default
 
   bool _emailError = false;
   bool _passwordError = false;
@@ -131,8 +132,15 @@ class _LoginPageState extends State<LoginPage> {
                             setState(() => _emailBorderColor = color),
                         focusNode: _focusNodeEmail,
                         showSuffixIcon: _showEmailClear,
-                        obscureText: false,
+                        obscureText: _obscureEmail,
+                        onSuffixIconTap: () {
+                          setState(() {
+                            _obscureEmail =
+                                !_obscureEmail; // toggle visibility like password
+                          });
+                        },
                       ),
+
                       const SizedBox(height: 16),
 
                       // Password input
@@ -249,19 +257,23 @@ class _LoginPageState extends State<LoginPage> {
                         height: 55,
                         child: OutlinedButton(
                           onPressed: () async {
-  User? user = await Auth().signInWithGoogle();
+                            User? user = await Auth().signInWithGoogle();
 
-  if (user != null) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const HomePage()),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Google Sign-In failed")),
-    );
-  }
-},
+                            if (user != null) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const HomePage(),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Google Sign-In failed"),
+                                ),
+                              );
+                            }
+                          },
 
                           style: OutlinedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -290,6 +302,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const Spacer(),
+                      const SizedBox(height: 7),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -367,8 +380,10 @@ class _LoginPageState extends State<LoginPage> {
             focusNode: focusNode,
             obscureText: obscureText,
             style: const TextStyle(fontSize: 14),
-            cursorColor: const Color(0xFFE3001C),
+            cursorColor: Colors.black,
             cursorHeight: 18,
+            cursorWidth: 2,
+            cursorRadius: const Radius.circular(3),
             onChanged: (text) {
               if (errorFlag && text.isNotEmpty) onErrorChange(false);
               onBorderChange(const Color(0xFF4F4F4F));
