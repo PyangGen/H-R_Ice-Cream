@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ice_cream/driver/login.dart';
 import 'login_page.dart';
 
 class LandingPage extends StatelessWidget {
@@ -17,7 +18,7 @@ class LandingPage extends StatelessWidget {
                 clipper: BottomCurveClipper(),
                 child: Container(
                   width: double.infinity,
-                  height: 480,
+                  height: 440,
                   color: const Color(0xFFE3001B),
                   child: Stack(
                     alignment: Alignment.center,
@@ -263,7 +264,7 @@ class LandingPage extends StatelessWidget {
                 style: TextStyle(fontSize: 13, color: Color(0xFF313131)),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
 
               // ------------------ SIMPLE ORDER NOW BUTTON ------------------
               GestureDetector(
@@ -291,25 +292,60 @@ class LandingPage extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  width: 294,
-                  height: 63,
+                  width: 221,
+                  height: 59,
                   decoration: BoxDecoration(
                     color: const Color(0xFFE3001B),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   alignment: Alignment.center,
                   child: const Text(
-                    "Order Now",
+                    "Login as Customer",
                     style: TextStyle(
                       color: Color(0xFFFFFFFF),
-                      fontSize: 17.69,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 16.76,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
 
               const SizedBox(height: 20),
+
+              // ------------------ NEW BUTTON BELOW ORDER NOW BUTTON ------------------
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 221,
+                  height: 59,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFFFFF), // background color white
+                    borderRadius: BorderRadius.circular(40),
+                    border: Border.all(
+                      color: const Color(0xFFE3001B), // border color #E3001B
+                      width: 1,
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "Login as Driver",
+                    style: TextStyle(
+                      color: Color(0xFFE3001B), // text color #E3001B
+                      fontSize: 16.76,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+
+         
             ],
           ),
         ),

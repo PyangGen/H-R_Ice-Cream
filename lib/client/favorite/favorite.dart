@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ice_cream/client/home_page.dart';
-import 'package:ice_cream/client/messages/messages.dart';
 import 'package:ice_cream/client/messages/no_notifications.dart';
 import 'package:ice_cream/client/order/all.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class FavoritePage extends StatelessWidget {
   const FavoritePage({super.key});
@@ -12,73 +12,73 @@ class FavoritePage extends StatelessWidget {
     final List<Map<String, dynamic>> items = [
       {
         "name": "Strawberry",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/sb.png",
         "color": const Color(0xFFFFE0E6),
       },
       {
         "name": "Ube Cheese",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/uc.png",
         "color": const Color(0xFFEDE1F5),
       },
       {
         "name": "Mango Graham",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/mg.png",
         "color": const Color(0xFFFFF2D7),
       },
       {
         "name": "Buko Pandan",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/bp.png",
         "color": const Color(0xFFE4F7E9),
       },
       {
         "name": "Vanilla",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/vl.png",
         "color": const Color(0xFFFFF3DD),
       },
       {
         "name": "Ube Macapuno",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/um.png",
         "color": const Color(0xFFEDE1F5),
       },
       {
         "name": "Strawberry",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/sb.png",
         "color": const Color(0xFFFFE0E6),
       },
       {
         "name": "Ube Cheese",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/uc.png",
         "color": const Color(0xFFEDE1F5),
       },
       {
         "name": "Mango Graham",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/mg.png",
         "color": const Color(0xFFFFF2D7),
       },
       {
         "name": "Buko Pandan",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/bp.png",
         "color": const Color(0xFFE4F7E9),
       },
       {
         "name": "Vanilla",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/vl.png",
         "color": const Color(0xFFFFF3DD),
       },
       {
         "name": "Ube Macapuno",
-        "price": "\$12.99",
+        "price": "₱12.99",
         "image": "lib/client/favorite/images/um.png",
         "color": const Color(0xFFEDE1F5),
       },
@@ -132,10 +132,11 @@ class FavoritePage extends StatelessWidget {
             child: IconButton(
               padding: EdgeInsets.zero, // removes extra empty space
               onPressed: () {},
-              icon: Image.asset(
-                "lib/client/favorite/images/shopping_cart.png",
-                height: 20.11,
-                width: 19.56,
+              icon: Icon(
+                Icons.shopping_cart,
+                size: 22,
+                color: Color(0xFFE3001B),
+                fill: 1.0,
               ),
             ),
           ),
@@ -228,7 +229,6 @@ class FavoritePage extends StatelessWidget {
     );
   }
 
-  // ---------------- BOTTOM NAV ----------------
   Widget _bottomNavBar(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(left: 18, right: 18, bottom: 12),
@@ -241,7 +241,7 @@ class FavoritePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _BottomIcon(
-             imagePath: "lib/client/order/images/home.png",
+              icon: Symbols.home,
               label: "Home",
               onTap: () {
                 Navigator.push(
@@ -251,7 +251,7 @@ class FavoritePage extends StatelessWidget {
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/images/home_page/local_mall.png",
+              icon: Symbols.local_mall,
               label: "Order",
               onTap: () {
                 Navigator.push(
@@ -261,18 +261,19 @@ class FavoritePage extends StatelessWidget {
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/favorite/images/favorite.png",
+              icon: Symbols.favorite,
               label: "Favorite",
               active: true,
               onTap: () {},
+              fillColor: const Color(0xFFE3001B),
             ),
             _BottomIcon(
-              imagePath: "lib/client/images/home_page/chat.png",
+              icon: Symbols.chat,
               label: "Messages",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const NoNotificationsPage()),
+                  MaterialPageRoute(builder: (_) => const NoNotificationsPage()),
                 );
               },
             ),
@@ -284,51 +285,52 @@ class FavoritePage extends StatelessWidget {
 }
 
 class _BottomIcon extends StatelessWidget {
-  final IconData? icon;
-  final String? imagePath;
+  final IconData icon;
   final String label;
   final bool active;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
+  final Color? fillColor; // New parameter for custom fill color
 
   const _BottomIcon({
-    this.icon,
-    this.imagePath,
+    required this.icon,
     required this.label,
+    required this.onTap,
     this.active = false,
-    this.onTap,
-    super.key,
+    this.fillColor, // Allow fillColor to be passed
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final Color iconColor = active ? Color(0xFFE3001B) : const Color(0xFF969696);
+    final double fillValue = (active && fillColor != null) ? 1 : 0;
+
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (imagePath != null)
-            Image.asset(
-              imagePath!,
-              height: 16,
-              width: 18,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
-              fit: BoxFit.contain,
-            )
-          else if (icon != null)
+      borderRadius: BorderRadius.circular(0),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Icon(
               icon,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
+              size: 21,
+              color: fillColor != null && active ? fillColor : iconColor,
+              fill: fillValue,
+              weight: 100,
+              grade: 200,
+              opticalSize: 24,
             ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
-              fontWeight: active ? FontWeight.w700 : FontWeight.normal,
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: iconColor,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

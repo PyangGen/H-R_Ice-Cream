@@ -149,7 +149,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
 
               // FIRST + LAST NAME
               Row(
@@ -176,13 +176,13 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                 ],
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
 
               // CONTACT NUMBER
               _label("Contact Number"),
               _textField(contactController, keyboardType: TextInputType.phone),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
 
               // PROVINCE + CITY
               Row(
@@ -218,7 +218,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                 ],
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
 
               // BARANGAY + POSTAL
               Row(
@@ -249,13 +249,13 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                 ],
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
 
               // STREET
               _label("Street Name, Building, House No."),
               _textField(streetController),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               GestureDetector(
                 onTap: () {
@@ -265,7 +265,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                   );
                 },
                 child: Container(
-                  height: 110,
+                  height: 114,
                   decoration: BoxDecoration(
                     color: const Color(0xFFF2F2F2),
                     borderRadius: BorderRadius.circular(12),
@@ -300,10 +300,10 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
 
               _label("Label as:"),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
 
               // LABEL BUTTONS
               Row(
@@ -318,7 +318,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 15,
-                          vertical: 10,
+                          vertical: 8,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
@@ -347,7 +347,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                 }),
               ),
 
-              const SizedBox(height: 13),
+              const SizedBox(height: 11),
 
               // SAVE BUTTON
               GestureDetector(
@@ -396,7 +396,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
     TextInputType keyboardType = TextInputType.text,
   }) {
     return Container(
-      height: 48,
+      height: 46,
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: _boxDecoration(),
       alignment: Alignment.centerLeft,
@@ -420,7 +420,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
 
 Widget _disabledField(String value) {
   return Container(
-    height: 48,
+    height: 46,
     padding: const EdgeInsets.symmetric(horizontal: 15),
     decoration: BoxDecoration(
       color: Colors.grey.shade200,
@@ -444,7 +444,7 @@ Widget _disabledField(String value) {
     Function(String?) onChanged,
   ) {
     return Container(
-      height: 48,
+      height: 46,
       padding: const EdgeInsets.symmetric(horizontal: 15),
       alignment: Alignment.center,
       decoration: _boxDecoration(),

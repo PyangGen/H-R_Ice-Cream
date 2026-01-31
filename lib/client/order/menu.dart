@@ -2,12 +2,25 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ice_cream/client/order/cart.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:ice_cream/client/order/deliverTracker.dart';
+import 'package:ice_cream/client/order/gcash.dart';
 import 'package:ice_cream/client/order/manage_address.dart';
 import 'package:intl/intl.dart';
 
 class MenuPage extends StatefulWidget {
-  const MenuPage({super.key});
+  const MenuPage({
+    super.key,
+    this.initialFlavorName,
+    this.initialItemIndex,
+    this.initialDisplayName,
+  });
+
+  /// When set, opens the product detail for the item at this index in [items].
+  final int? initialItemIndex;
+  final String? initialFlavorName;
+  /// When set, this name is shown as the product title on the detail page (e.g. from Popular slideshow).
+  final String? initialDisplayName;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -54,6 +67,28 @@ class _MenuPageState extends State<MenuPage> {
     _stopBigImageAutoSlide();
     _bigImageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      // Exact match by index (from home slider) takes priority
+      if (widget.initialItemIndex != null) {
+        final idx = widget.initialItemIndex!.clamp(0, items.length - 1);
+        setState(() => selectedItem = items[idx]);
+        return;
+      }
+      final name = widget.initialFlavorName?.replaceAll(" Flavor", "").trim();
+      if (name != null && name.isNotEmpty) {
+        final match = items.where((e) =>
+            (e["name"] as String).toLowerCase() == name.toLowerCase()).toList();
+        if (match.isNotEmpty) {
+          setState(() => selectedItem = match.first);
+        }
+      }
+    });
   }
 
   final List<Map<String, dynamic>> items = [
@@ -274,22 +309,13 @@ class _MenuPageState extends State<MenuPage> {
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: () {
-                        if (selectedItem != null) {
-                          setState(() {
-                            selectedItem = null;
-                            quantity = 0;
-                            selectedSize = "";
-                          });
-                          _stopBigImageAutoSlide();
-                        } else {
-                          Navigator.pop(context);
-                        }
+                        Navigator.pop(context);
                       },
                       child: const Center(
                         child: Icon(
                           Icons.arrow_back,
                           size: 20,
-                        ), // icon stays centered
+                        ),
                       ),
                     ),
                   ),
@@ -317,10 +343,10 @@ class _MenuPageState extends State<MenuPage> {
                         ),
                       );
                     },
-                    icon: Image.asset(
-                      "lib/client/favorite/images/shopping_cart.png",
-                      height: 20,
-                      width: 20,
+                    icon: Icon(
+                      Icons.shopping_cart,
+                      color: const Color(0xFFE3001B),
+                      size: 20,
                     ),
                   ),
                 ),
@@ -492,11 +518,23 @@ class _MenuPageState extends State<MenuPage> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Image.asset(
-                                "lib/client/order/images/group.png",
-                                width: 20,
-                                height: 20,
-                                fit: BoxFit.contain,
+                              Container(
+                                width: 22,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFFE3001B),
+                                    width: 1,
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.add,
+                                  size: 19,
+                                  color: const Color(0xFFE3001B),
+                                ),
                               ),
                             ],
                           ),
@@ -635,10 +673,11 @@ class _MenuPageState extends State<MenuPage> {
                                       color: Colors.white.withOpacity(0.90),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: Image.asset(
-                                      "lib/client/order/images/favorite.png",
-                                      height: 20,
-                                      width: 20,
+                                    child: const Icon(
+                                      Icons.favorite,
+                                      size: 22,
+                                      color: Color(0xFFE3001B),
+                                      fill: 1,
                                     ),
                                   ),
                                 ),
@@ -672,7 +711,7 @@ class _MenuPageState extends State<MenuPage> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  selectedItem!["name"],
+                                  widget.initialDisplayName ?? selectedItem!["name"],
                                   style: const TextStyle(
                                     fontSize: 23.2,
                                     fontWeight: FontWeight.w700,
@@ -1147,16 +1186,19 @@ class _MenuPageState extends State<MenuPage> {
                     onTap: () {},
                     child: Padding(
                       padding: const EdgeInsets.only(top: 6, right: 4),
-                      child: Image.asset(
-                        "lib/client/order/images/delete2.png",
-                        height: 15,
-                        width: 15,
-                        fit: BoxFit.contain,
+                      child: Icon(
+                        Symbols.delete,
+                        size: 16,
+                        color: Color(0xFFE3001B),
+                        fill: 1,
+                        weight: 700,
+                        grade: 200,
+                        opticalSize: 48,
                       ),
                     ),
                   ),
                   const SizedBox(
-                    height: 8,
+                    height: 7,
                   ), // small spacing between image and new text
                   const Padding(
                     padding: EdgeInsets.only(right: 4),
@@ -1291,6 +1333,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String selectedPayment = "";
+  int? selectedDownPayment;
 
   @override
   Widget build(BuildContext context) {
@@ -1334,7 +1377,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
             _buildSection(
               title: "Address details",
               trailing: "Edit",
-
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1418,27 +1460,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 60),
+                  const SizedBox(width: 0), // Fix: changed from SizedBox(height: 60) which was an error
                 ],
               ),
             ),
-
             _buildSection(
-              title: "Delivery schedule",
-              child: Transform.translate(
-                offset: const Offset(0, 0), // move up a little
-                child: Row(
-                  children: [
-                    Expanded(child: _datePicker()),
-                    const SizedBox(width: 12),
-                    Expanded(child: _timePicker()),
-                  ],
-                ),
-              ),
-            ),
-
-            _buildSection(
-              title: "Products Ordered",
+              title: "Product Order",
               child: Column(
                 children: [
                   // FIRST PRODUCT
@@ -1449,8 +1476,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         borderRadius: BorderRadius.circular(8),
                         child: Image.asset(
                           "lib/client/order/images/sb.png",
-                          width: 67,
-                          height: 67,
+                          width: 63,
+                          height: 63,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -1583,19 +1610,32 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
 
             _buildSection(
-              title: "Payment Method",
+              title: "Delivery schedule",
+              child: Transform.translate(
+                offset: const Offset(0, 0), // move up a little
+                child: Row(
+                  children: [
+                    Expanded(child: _datePicker()),
+                    const SizedBox(width: 12),
+                    Expanded(child: _timePicker()),
+                  ],
+                ),
+              ),
+            ),
+
+            _buildSection(
+              title: "Down payment Amount",
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // --- Dotted Line directly under title ---
-                  const SizedBox(height: 4), // ← moved up (from 12 → 4)
+                  const SizedBox(height: 0), // ← moved up (from 12 → 4)
 
                   LayoutBuilder(
                     builder: (context, constraints) {
                       double dotWidth = 4.1;
                       double spacing = 4;
-                      int count = (constraints.maxWidth / (dotWidth + spacing))
-                          .floor();
+                      int count = (constraints.maxWidth / (dotWidth + spacing)).floor();
 
                       return Row(
                         children: List.generate(
@@ -1612,32 +1652,71 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ),
 
                   const SizedBox(
-                    height: 10,
+                    height: 11,
                   ), // you can also reduce this if needed
                   // --- Payment Tiles ---
-                  _paymentTile(
-                    title: "Gcash",
-                    subtitle: "(+63) 9123456789",
-                    asset: "lib/client/order/images/gcash.png",
-                    value: "gcash",
-                  ),
-                  const SizedBox(height: 10),
-                  _paymentTile(
-                    title: "Cash On Delivery",
-                    asset: "lib/client/order/images/cod.png",
-                    value: "cod",
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _priceBox(500),
+                      _priceBox(1000),
+                      _priceBox(1700),
+                      _priceBox(1900),
+                    ],
                   ),
                 ],
               ),
             ),
             _buildSection(
+              title: "Payment Method",
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // --- Dotted Line directly under title ---
+                  const SizedBox(height: 0), // ← moved up (from 12 → 4)
+
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      double dotWidth = 4.1;
+                      double spacing = 4;
+                      int count = (constraints.maxWidth / (dotWidth + spacing)).floor();
+
+                      return Row(
+                        children: List.generate(
+                          count,
+                          (_) => Container(
+                            width: dotWidth,
+                            height: 1,
+                            margin: EdgeInsets.only(right: spacing),
+                            color: const Color(0xFFB2B2B2),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(
+                    height: 5,
+                  ), // you can also reduce this if needed
+                  // --- Payment Tiles ---
+                  _paymentTile(
+                    title: "Gcash",
+                    subtitle: "Not linked",
+                    asset: "lib/client/order/images/gcsh.png",
+                    value: "gcash",
+                  ),
+             
+                ],
+              ),
+            ),
+            _buildSection(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
               child: Column(
                 children: [
-                  _summaryRow("SUBTOTAL", "\$ 300"),
-                  const SizedBox(height: 6),
+                  _summaryRow("GALLON", "₱200"),
+                  _summaryRow("SUBTOTAL", "₱ 300"),
                   _summaryRow("DELIVERY FEE", "0"),
-                  const SizedBox(height: 6),
-                  _summaryRow("TOTAL PAYMENT", "\$ 300", isBold: true),
+                  _summaryRow("TOTAL PAYMENT", "₱ 300", isBold: true),
                 ],
               ),
             ),
@@ -1655,6 +1734,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget _buildSection({
     String? title,
     String? trailing,
+    EdgeInsets? padding,
     required Widget child,
   }) {
     bool isAddress = title == "Address details";
@@ -1662,22 +1742,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
     // Titles that must move up
     final bool moveUpTitles =
         title == "Delivery schedule" ||
-        title == "Products Ordered" ||
-        title == "Payment Method";
+        title == "Product Order" ||
+        title == "Payment Method" ||
+        title == "Down payment Amount";
 
     // Correct font-weight logic
     FontWeight getFontWeight(String? txt) {
-      if (txt == "Payment Method") return FontWeight.w500; // REGULAR
-      if (txt == "Delivery schedule" || txt == "Products Ordered")
-        return FontWeight.w700; // BOLD
+      if (txt == "Payment Method" || txt == "Product Order") return FontWeight.w500; // REGULAR
+      if (txt == "Delivery schedule") return FontWeight.w700; // BOLD
       return FontWeight.w700;
     }
 
     return Container(
       // Horizontal margin set to 20 for all sections
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      // Padding: 10 for address, 15 for everything else including delivery schedule
-      padding: EdgeInsets.all(isAddress ? 10 : 15),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+      padding: padding ?? EdgeInsets.all(isAddress ? 10 : 15),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -1706,10 +1785,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       if (isAddress)
                         Padding(
                           padding: const EdgeInsets.only(right: 6),
-                          child: Image.asset(
-                            "lib/client/order/images/location_on.png",
-                            width: 20,
-                            height: 20,
+                          child: Icon(
+                            Icons.location_on,
+                            size: 17,
+                            color: const Color(0xFFE3001B),
+                            fill: 1,
                           ),
                         ),
                       Text(
@@ -1757,8 +1837,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               builder: (context, constraints) {
                 double dotWidth = 4.1;
                 double spacing = 4;
-                int count = (constraints.maxWidth / (dotWidth + spacing))
-                    .floor();
+                int count = (constraints.maxWidth / (dotWidth + spacing)).floor();
 
                 return Row(
                   children: List.generate(
@@ -1790,6 +1869,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       onTap: () async {
         DateTime? date = await showDatePicker(
           context: context,
+          initialDate: selectedDate ?? DateTime.now(), // Fix: Ensure initialDate is provided
           firstDate: DateTime.now(),
           lastDate: DateTime(2030),
           builder: (context, child) {
@@ -1837,125 +1917,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  /* Widget _datePicker() {
-  return InkWell(
-    onTap: () async {
-      DateTime? date = await showDatePicker(
-        context: context,
-        initialDate: selectedDate ?? DateTime.now(),
-        firstDate: DateTime.now(),
-        lastDate: DateTime(2030),
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: const ColorScheme.light(
-                primary: Color(0xFF1A73E8), // Blue selected circle
-                onPrimary: Colors.white,
-                onSurface: Color(0xFF1A1A1A),
-              ),
-
-              // TOP BAR (Month title & arrows)
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Colors.white,
-                elevation: 0,
-                centerTitle: true,
-                titleTextStyle: TextStyle(
-                  color: Color(0xFF1A1A1A),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-                iconTheme: IconThemeData(
-                  color: Color(0xFF1A1A1A),
-                  size: 22,
-                ),
-              ),
-
-              textButtonTheme: TextButtonThemeData(
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF1A73E8),
-                  textStyle: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-
-              datePickerTheme: DatePickerThemeData(
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-
-                // WEEKDAY LABELS (Sun, Mon, Tue...)
-                weekdayStyle: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF8A8A8A),
-                ),
-
-                // DAYS
-                dayStyle: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1A1A1A),
-                ),
-
-                todayForegroundColor: MaterialStateProperty.all(
-                    const Color(0xFF1A73E8)),
-                todayBackgroundColor:
-                    MaterialStateProperty.all(Colors.transparent),
-
-                // SELECTED DAY CIRCLE
-                dayForegroundColor: MaterialStateProperty.resolveWith((states) {
-                  if (states.contains(MaterialState.selected)) {
-                    return Colors.white;
-                  }
-                  return const Color(0xFF1A1A1A);
-                }),
-                dayBackgroundColor: MaterialStateProperty.resolveWith((states) {
-                  if (states.contains(MaterialState.selected)) {
-                    return const Color(0xFF1A73E8);
-                  }
-                  return Colors.transparent;
-                }),
-              ),
-            ),
-            child: child!,
-          );
-        },
-      );
-
-      if (date != null) setState(() => selectedDate = date);
-    },
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.calendar_today_outlined,
-            size: 20,
-            color: Color(0xFF777777),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            selectedDate == null
-                ? "mm/dd/yyyy"
-                : DateFormat('MM/dd/yyyy').format(selectedDate!),
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-} */
   // -----------------------------
   // Time Picker
   // -----------------------------
@@ -1964,7 +1925,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       onTap: () async {
         TimeOfDay? time = await showTimePicker(
           context: context,
-          initialTime: TimeOfDay.now(),
+          initialTime: selectedTime ?? TimeOfDay.now(), // Fix: Prefer selectedTime if available
           builder: (context, child) {
             return Theme(
               data: Theme.of(context).copyWith(
@@ -1974,7 +1935,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   surface: Colors.white,
                   onSurface: Colors.black,
                 ),
-
                 // ⭐ AM / PM style FIX (compatible with older Flutter)
                 timePickerTheme: TimePickerThemeData(
                   dayPeriodShape: RoundedRectangleBorder(
@@ -2001,7 +1961,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     return Colors.black; // unselected black text
                   }),
                 ),
-
                 dialogBackgroundColor: Colors.white,
               ),
               child: child!,
@@ -2037,24 +1996,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
     required String asset,
     required String value,
   }) {
-    // Determine font weight dynamically
-    FontWeight getTitleWeight() {
-      if (title == "Cash On Delivery") return FontWeight.w500; // lighter
-      return FontWeight.w700; // Gcash bold
-    }
-
-    bool isSelected = selectedPayment == value;
-
     return Row(
       children: [
-        Image.asset(asset, width: 45, height: 45),
-        const SizedBox(width: 12),
+        Image.asset(asset, width: 40, height: 40),
+        const SizedBox(width: 18),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: TextStyle(fontSize: 15, fontWeight: getTitleWeight()),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
             ),
             if (subtitle != null)
               Text(
@@ -2065,31 +2016,19 @@ class _CheckoutPageState extends State<CheckoutPage> {
         ),
         const Spacer(),
         GestureDetector(
-          onTap: () => setState(() => selectedPayment = value),
-          child: Container(
-            width: 15,
-            height: 15,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isSelected
-                    ? const Color(0xFF007CFF)
-                    : const Color(0xFF1C1B1F),
-                width: 1.5, // thin border
-              ),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => GcashDetailsPage()),
+            );
+          },
+          child: Text(
+            "Link My Account",
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF007CFF),
+              decoration: TextDecoration.none,
             ),
-            child: isSelected
-                ? Center(
-                    child: Container(
-                      width: 8, // inner dot
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFF007CFF),
-                      ),
-                    ),
-                  )
-                : null,
           ),
         ),
       ],
@@ -2118,6 +2057,34 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _priceBox(int amount) {
+    final isSelected = selectedDownPayment == amount;
+    return GestureDetector(
+      onTap: () => setState(() => selectedDownPayment = amount),
+      child: Container(
+        width: 65,
+        height: 30,
+        alignment: Alignment.center,
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFE3001B) : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? const Color(0xFFE3001B) : const Color(0xFF3F3F3F),
+            width: 0.5,
+          ),
+        ),
+        child: Text(
+          "₱${NumberFormat('#,###').format(amount)}",
+          style: TextStyle(
+            color: isSelected ? const Color(0xFFFFFFFF) : const Color(0xFF1C1B1F),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
     );
   }
 }

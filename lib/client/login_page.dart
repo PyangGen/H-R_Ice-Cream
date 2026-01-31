@@ -284,11 +284,11 @@ class _LoginPageState extends State<LoginPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                'lib/client/images/CL_page/google.png',
-                                height: 32,
-                                width: 32,
+                                'lib/client/images/CL_page/ggl.png',
+                                height: 50,
+                                width: 50,
                               ),
-                              const SizedBox(width: 15),
+                              const SizedBox(width: 8),
                               const Text(
                                 'Sign In with Google',
                                 style: TextStyle(

@@ -1,22 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:ice_cream/client/messages/messages.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class DeliveryTrackerPage extends StatelessWidget {
   const DeliveryTrackerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    const double mapTop = 30;
+    const double mapHeight = 300;
+
     return Scaffold(
       body: Stack(
         children: [
-          // Map placeholder
-          Container(
-            height: double.infinity,
-            color: Colors.grey.shade300,
-            child: const Center(
-              child: Text(
-                'Map View Placeholder',
-                style: TextStyle(fontSize: 18),
+          // Map background
+          Positioned(
+            top: mapTop,
+            left: 0,
+            right: 0,
+            height: mapHeight,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Image.asset(
+                'lib/client/order/images/map.png',
+                fit: BoxFit.cover,
               ),
+            ),
+          ),
+          // X (close) button - top right of map
+          Positioned(
+            top: mapTop + 12,
+            right: 18,
+            child: _mapOverlayButton(
+              icon: Icons.close,
+              onTap: () => Navigator.of(context).pop(),
+            ),
+          ),
+          // + and - zoom buttons - bottom right of map
+          Positioned(
+            top: mapTop + mapHeight - 24 - 48 - 20 - 46,
+            right: 18,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _mapOverlayButton(icon: Icons.add, onTap: () {}),
+                const SizedBox(height: 10),
+                _mapOverlayButton(icon: Icons.remove, onTap: () {}),
+              ],
             ),
           ),
           // Bottom sheet panel
@@ -41,7 +71,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20, // horizontal padding
-                      vertical: 16, // keeps vertical spacing
+                      vertical: 14, // keeps vertical spacing
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,33 +80,35 @@ class DeliveryTrackerPage extends StatelessWidget {
                         Row(
                           children: const [
                             Text(
-                              'Estimated Arrival:',
+                              'Estimated on: 21 Nov, 12:30 PM',
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(width: 8),
-                            Text(
-                              '30 mins',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
+                          
                           ],
                         ),
 
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
                               children: [
-                                Image.asset(
-                                  'lib/client/order/images/box.png',
-                                  width: 45,
-                                  height: 45,
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF2F2F2),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Symbols.deployed_code,
+                                    size: 18,
+                                    color: const Color(0xFF1C1B1F),
+                                  ),
                                 ),
                                 const SizedBox(width: 12),
 
@@ -91,11 +123,11 @@ class DeliveryTrackerPage extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      'Ice Cream',
+                                      'Transaction ID',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF676767),
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF575757),
                                       ),
                                     ),
                                   ],
@@ -127,7 +159,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                           ],
                         ),
 
-                        const Divider(height: 20),
+                        const Divider(height: 12),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,18 +169,18 @@ class DeliveryTrackerPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: const [
                                 Text(
-                                  'Shipped By:',
+                                  'Driver',
                                   style: TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xFF1C1B1F),
                                   ),
                                 ),
-                                SizedBox(height: 3),
+                                SizedBox(height: 2),
                                 Text(
-                                  'Quinjay',
+                                  'Kyley Reganion',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -166,17 +198,17 @@ class DeliveryTrackerPage extends StatelessWidget {
                                   child: Text(
                                     'Order Cost',
                                     style: TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF1C1B1F),
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 3),
+                                SizedBox(height: 2),
                                 Text(
                                   '\$300.00',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -191,19 +223,19 @@ class DeliveryTrackerPage extends StatelessWidget {
                                     right: 28,
                                   ), // moves only "Created:" left
                                   child: Text(
-                                    'Created:',
+                                    'Created',
                                     style: TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF1C1B1F),
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 3),
+                                SizedBox(height: 2),
                                 Text(
                                   '10/14/2025',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -211,7 +243,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 8),
 
                         Container(
                           padding: const EdgeInsets.all(16),
@@ -244,7 +276,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 5),
+                              SizedBox(height: 3),
 
                               Row(
                                 children: [
@@ -260,7 +292,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'Mixed',
+                                    '3.5 Gal',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -268,14 +300,14 @@ class DeliveryTrackerPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 15),
+                              SizedBox(height: 8),
 
                               Row(
                                 children: [
                                   SizedBox(
                                     width: 160,
                                     child: Text(
-                                      'Order:',
+                                      'Flavor:',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
@@ -292,14 +324,14 @@ class DeliveryTrackerPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 5),
+                              SizedBox(height: 3),
 
                               Row(
                                 children: [
                                   SizedBox(
                                     width: 160,
                                     child: Text(
-                                      'Order cost:',
+                                      'Flavor cost:',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
@@ -308,7 +340,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    '₱300.00',
+                                    '₱1,700',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -316,14 +348,13 @@ class DeliveryTrackerPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 5),
-
-                              Row(
+                              SizedBox(height: 3),
+                               Row(
                                 children: [
                                   SizedBox(
                                     width: 160,
                                     child: Text(
-                                      'Payment Method:',
+                                      'Gallon cost:',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
@@ -332,7 +363,7 @@ class DeliveryTrackerPage extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'Gcash',
+                                    '₱200',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -340,14 +371,14 @@ class DeliveryTrackerPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 5),
+                              SizedBox(height: 3),
 
                               Row(
                                 children: [
                                   SizedBox(
                                     width: 160,
                                     child: Text(
-                                      'Status:',
+                                      'Down payment:',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
@@ -356,7 +387,31 @@ class DeliveryTrackerPage extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'Paid',
+                                    '₱500',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 3),
+
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 160,
+                                    child: Text(
+                                      'Contact number:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF606060),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '09785485214',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -368,14 +423,20 @@ class DeliveryTrackerPage extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 9.5),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             // Message Driver button
                             Expanded(
                               child: GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ChatPage(phoneNumber: '09785485214'),
+                                    ),
+                                  );
+                                },
                                 child: Container(
                                   height: 55, // same as Check Out
                                   decoration: BoxDecoration(
@@ -431,4 +492,26 @@ class DeliveryTrackerPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _mapOverlayButton({
+  required IconData icon,
+  required VoidCallback onTap,
+}) {
+  return Material(
+    color: Colors.white,
+    shape: const CircleBorder(),
+    elevation: 2,
+    shadowColor: Colors.black.withOpacity(0.2),
+    child: InkWell(
+      onTap: onTap,
+      customBorder: const CircleBorder(),
+      child: Container(
+        width: 44,
+        height: 44,
+        alignment: Alignment.center,
+        child: Icon(icon, color: const Color(0xFF1C1B1F), size: 24),
+      ),
+    ),
+  );
 }

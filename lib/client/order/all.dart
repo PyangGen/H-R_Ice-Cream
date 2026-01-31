@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ice_cream/client/favorite/favorite.dart';
 import 'package:ice_cream/client/home_page.dart';
 import 'package:ice_cream/client/messages/messages.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   const OrderHistoryPage({super.key});
@@ -18,7 +19,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
-      bottomNavigationBar: _bottomNavBar(),
+      bottomNavigationBar: _bottomNavBar(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -110,7 +111,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             rateColor: const Color(0xFFFFD900),
             isCompletedTab: true, // only for Completed
@@ -119,7 +120,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
             rateColor: const Color(0xFFFFD900),
             isCompletedTab: true,
@@ -128,7 +129,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             rateColor: const Color(0xFFFFD900),
             isCompletedTab: true,
@@ -137,7 +138,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/vn.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             rateColor: const Color(0xFFFFD900),
             isCompletedTab: true,
@@ -146,7 +147,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             rateColor: const Color(0xFFFFD900),
             isCompletedTab: true, // only for Completed
@@ -155,7 +156,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
             rateColor: const Color(0xFFFFD900),
             isCompletedTab: true,
@@ -164,7 +165,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             rateColor: const Color(0xFFFFD900),
             isCompletedTab: true,
@@ -173,7 +174,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/vn.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             rateColor: const Color(0xFFFFD900),
             isCompletedTab: true,
@@ -185,7 +186,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
             isProcessingTab: true,
           ),
@@ -193,7 +194,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isProcessingTab: true,
           ),
@@ -201,7 +202,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
             isProcessingTab: true,
           ),
@@ -209,7 +210,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/vn.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isProcessingTab: true,
           ),
@@ -217,7 +218,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
             isProcessingTab: true,
           ),
@@ -225,7 +226,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isProcessingTab: true,
           ),
@@ -233,7 +234,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
             isProcessingTab: true,
           ),
@@ -241,7 +242,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isProcessingTab: true,
           ),
@@ -252,7 +253,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -260,7 +261,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -268,7 +269,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -276,7 +277,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -284,7 +285,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -292,7 +293,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -300,7 +301,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -308,7 +309,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -316,7 +317,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
             isCancelledTab: true,
           ),
@@ -327,63 +328,63 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
           ),
           orderCard(
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
           ),
           orderCard(
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
           ),
           orderCard(
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
           ),
           orderCard(
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
           ),
           orderCard(
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
           ),
           orderCard(
             img: "lib/client/order/images/mg.png",
             name: "Mango Graham",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
           ),
           orderCard(
             img: "lib/client/order/images/ub.png",
             name: "Ube Cheese",
             size: "2 gal",
-            price: "\$200",
+            price: "₱200",
             qty: "2",
           ),
           orderCard(
             img: "lib/client/order/images/cc.png",
             name: "Cookies & Cream",
             size: "4 gal",
-            price: "\$300",
+            price: "₱300",
             qty: "1",
           ),
         ];
@@ -640,7 +641,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   }
 
   // ---------------- BOTTOM NAV ----------------
-  Widget _bottomNavBar() {
+  Widget _bottomNavBar(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(left: 18, right: 18, bottom: 12),
       color: Colors.white,
@@ -652,45 +653,39 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _BottomIcon(
-              imagePath: "lib/client/order/images/home.png",
+              icon: Symbols.home,
               label: "Home",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
+                  MaterialPageRoute(builder: (_) => const HomePage()),
                 );
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/order/images/shopO.png",
+              icon: Symbols.local_mall,
               label: "Order",
               active: true,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const OrderHistoryPage(),
-                  ),
-                );
-              },
+              onTap: () {},
+              fillColor: const Color(0xFFE3001B),
             ),
             _BottomIcon(
-              imagePath: "lib/client/images/home_page/favorite.png",
+              icon: Symbols.favorite,
               label: "Favorite",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const FavoritePage()),
+                  MaterialPageRoute(builder: (_) => const FavoritePage()),
                 );
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/images/home_page/chat.png",
+              icon: Symbols.chat,
               label: "Messages",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MessagesPage()),
+                  MaterialPageRoute(builder: (_) => const MessagesPage()),
                 );
               },
             ),
@@ -986,51 +981,52 @@ class _RateOrderPageState extends State<RateOrderPage> {
 }
 
 class _BottomIcon extends StatelessWidget {
-  final IconData? icon;
-  final String? imagePath;
+  final IconData icon;
   final String label;
   final bool active;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
+  final Color? fillColor;
 
   const _BottomIcon({
-    this.icon,
-    this.imagePath,
+    required this.icon,
     required this.label,
+    required this.onTap,
     this.active = false,
-    this.onTap,
-    super.key,
+    this.fillColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final Color iconColor = active ? const Color(0xFFE3001B) : const Color(0xFF969696);
+    final double fillValue = (active && fillColor != null) ? 1 : 0;
+
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (imagePath != null)
-            Image.asset(
-              imagePath!,
-              height: 16,
-              width: 18,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
-              fit: BoxFit.contain,
-            )
-          else if (icon != null)
+      borderRadius: BorderRadius.circular(0),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Icon(
               icon,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
+              size: 21,
+              color: fillColor != null && active ? fillColor : iconColor,
+              fill: fillValue,
+              weight: 100,
+              grade: 200,
+              opticalSize: 24,
             ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
-              fontWeight: active ? FontWeight.w700 : FontWeight.normal,
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: iconColor,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1265,14 +1261,26 @@ Future<void> showCancelOrderDialog(BuildContext context) {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Top image (red X)
+                      // Top icon (cancel X, filled) on red circle
                       Padding(
                         padding: const EdgeInsets.all(1),
-                        child: Image.asset(
-                          "lib/client/order/images/cancel.png",
-                          width: 34,
-                          height: 34,
-                          fit: BoxFit.contain,
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE3001B),
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Symbols.close,
+                            size: 26,
+                            color: Colors.white,
+                            fill: 1,
+                            weight: 700,
+                            grade: 0,
+                            opticalSize: 24,
+                          ),
                         ),
                       ),
 
@@ -1394,15 +1402,15 @@ Future<void> showSuccessDialog(BuildContext context) {
 
             children: [
               const SizedBox(height: 10),
-              // Success image
-              Container(
-                padding: const EdgeInsets.all(1),
-                child: Image.asset(
-                  "lib/client/order/images/check_circle.png", // replace with your success image
-                  width: 34,
-                  height: 34,
-                  fit: BoxFit.contain,
-                ),
+              // Success icon (check circle, green)
+              Icon(
+                Symbols.check_circle,
+                size: 44, // matches previous container size
+                color: Color(0xFF22B345),
+                fill: 1,
+                weight: 400,
+                grade: 0,
+                opticalSize: 24,
               ),
 
               const SizedBox(height: 8),

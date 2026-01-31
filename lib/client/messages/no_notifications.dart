@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ice_cream/client/favorite/favorite.dart';
 import 'package:ice_cream/client/home_page.dart';
 import 'package:ice_cream/client/order/all.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class NoNotificationsPage extends StatefulWidget {
   const NoNotificationsPage({super.key});
@@ -19,7 +20,7 @@ class _MessagesPageState extends State<NoNotificationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
-      bottomNavigationBar: _bottomNavBar(), // << added here
+      bottomNavigationBar: _bottomNavBar(context),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,12 +36,17 @@ class _MessagesPageState extends State<NoNotificationsPage> {
                     "Messages",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
                   ),
-                  GestureDetector(
-                    child: Image.asset(
-                      "lib/client/messages/images/delete.png",
-                      height: 20.4,
-                      width: 18.13,
+                  IconButton(
+                    icon: const Icon(
+                      Symbols.delete,
+                      size: 25,
+                      color: Colors.black,
+                      fill: 0,
+                      weight: 200,
+                      grade: 200,
+                      opticalSize: 24,
                     ),
+                    onPressed: () => _showDeleteAllModal(context),
                   ),
                 ],
               ),
@@ -183,8 +189,100 @@ class _MessagesPageState extends State<NoNotificationsPage> {
     );
   }
 
+  void _showDeleteAllModal(BuildContext context) {
+    String title = selectedTab == 1
+        ? "Delete all notifications?"
+        : "Delete all messages?";
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(35),
+              topRight: Radius.circular(35),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1C1B1F),
+                ),
+              ),
+              const SizedBox(height: 5),
+              const Text(
+                "You can't undo this later.",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF747474),
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 30),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE3001B),
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "Delete All",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF4F4F4),
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "Keep Them",
+                    style: TextStyle(
+                      color: Color(0xFF414141),
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   // ---------------- BOTTOM NAV BAR ----------------
-  Widget _bottomNavBar() {
+  Widget _bottomNavBar(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(left: 18, right: 18, bottom: 12),
       color: Color(0xFFFFFFFF),
@@ -196,42 +294,41 @@ class _MessagesPageState extends State<NoNotificationsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _BottomIcon(
-              imagePath: "lib/client/order/images/home.png",
+              icon: Symbols.home,
               label: "Home",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
+                  MaterialPageRoute(builder: (_) => const HomePage()),
                 );
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/images/home_page/local_mall.png",
+              icon: Symbols.local_mall,
               label: "Order",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const OrderHistoryPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const OrderHistoryPage()),
                 );
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/images/home_page/favorite.png",
+              icon: Symbols.favorite,
               label: "Favorite",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const FavoritePage()),
+                  MaterialPageRoute(builder: (_) => const FavoritePage()),
                 );
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/messages/images/chat.png",
+              icon: Symbols.chat,
               label: "Messages",
               active: true,
               onTap: () {},
+              fillColor: const Color(0xFFE3001B),
             ),
           ],
         ),
@@ -241,51 +338,52 @@ class _MessagesPageState extends State<NoNotificationsPage> {
 }
 
 class _BottomIcon extends StatelessWidget {
-  final IconData? icon;
-  final String? imagePath;
+  final IconData icon;
   final String label;
   final bool active;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
+  final Color? fillColor;
 
   const _BottomIcon({
-    this.icon,
-    this.imagePath,
+    required this.icon,
     required this.label,
+    required this.onTap,
     this.active = false,
-    this.onTap,
-    super.key,
+    this.fillColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final Color iconColor = active ? const Color(0xFFE3001B) : const Color(0xFF969696);
+    final double fillValue = (active && fillColor != null) ? 1 : 0;
+
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (imagePath != null)
-            Image.asset(
-              imagePath!,
-              height: 16,
-              width: 18,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
-              fit: BoxFit.contain,
-            )
-          else if (icon != null)
+      borderRadius: BorderRadius.circular(30),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Icon(
               icon,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
+              size: 21,
+              color: fillColor != null && active ? fillColor : iconColor,
+              fill: fillValue,
+              weight: 100,
+              grade: 200,
+              opticalSize: 24,
             ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
-              fontWeight: active ? FontWeight.w700 : FontWeight.normal,
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: iconColor,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

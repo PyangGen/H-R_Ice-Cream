@@ -335,11 +335,11 @@ class _SignUpPageState extends State<SignUpPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                'lib/client/images/CL_page/google.png',
-                                height: 32,
-                                width: 32,
+                                'lib/client/images/CL_page/ggl.png',
+                                height: 50,
+                                width: 50,
                               ),
-                              const SizedBox(width: 15),
+                              const SizedBox(width: 8),
                               const Text(
                                 "Sign Up with Google",
                                 style: TextStyle(
@@ -391,21 +391,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  // Shadow Box style
-  BoxDecoration _shadowBox() {
-    return BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.3),
-          spreadRadius: 1,
-          blurRadius: 6,
-          offset: const Offset(0, 3),
-        ),
-      ],
-    );
-  }
 
   Widget _buildInput(
     String label,

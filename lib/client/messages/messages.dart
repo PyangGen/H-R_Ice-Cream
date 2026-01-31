@@ -18,33 +18,39 @@ class _MessagesPageState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
-      bottomNavigationBar: _bottomNavBar(), // << added here
+      bottomNavigationBar: _bottomNavBar(context),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 15),
             // ---------------- TOP BAR ----------------
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Messages",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                  ),
-                  GestureDetector(
-                    onTap: () => _showDeleteAllModal(context),
-                    child: Image.asset(
-                      "lib/client/messages/images/delete.png",
-                      height: 20.4,
-                      width: 18.13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+   Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      const Text(
+        "Messages",
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+      ),
+      IconButton(
+        icon: const Icon(
+          Symbols.delete, // ✅ Material Symbols icon
+          size: 25,
+          color: Colors.black,
+
+          // ✅ matches your CSS:
+          fill: 0,
+          weight: 200,
+          grade: 200,
+          opticalSize: 24,
+        ),
+        onPressed: () => _showDeleteAllModal(context),
+      ),
+    ],
+  ),
+),
 
             const SizedBox(height: 10),
 
@@ -374,10 +380,10 @@ class _MessagesPageState extends State<MessagesPage> {
   }
 
   // ---------------- BOTTOM NAV BAR ----------------
-  Widget _bottomNavBar() {
+  Widget _bottomNavBar(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(left: 18, right: 18, bottom: 12),
-      color: Color(0xFFFFFFFF),
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       elevation: 0,
       child: SizedBox(
@@ -386,42 +392,41 @@ class _MessagesPageState extends State<MessagesPage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _BottomIcon(
-              imagePath: "lib/client/order/images/home.png",
+              icon: Symbols.home,
               label: "Home",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
+                  MaterialPageRoute(builder: (_) => const HomePage()),
                 );
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/images/home_page/local_mall.png",
+              icon: Symbols.local_mall,
               label: "Order",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const OrderHistoryPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const OrderHistoryPage()),
                 );
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/images/home_page/favorite.png",
+              icon: Symbols.favorite,
               label: "Favorite",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const FavoritePage()),
+                  MaterialPageRoute(builder: (_) => const FavoritePage()),
                 );
               },
             ),
             _BottomIcon(
-              imagePath: "lib/client/messages/images/chat.png",
+              icon: Symbols.chat,
               label: "Messages",
               active: true,
               onTap: () {},
+              fillColor: const Color(0xFFE3001B),
             ),
           ],
         ),
@@ -434,101 +439,120 @@ class _MessagesPageState extends State<MessagesPage> {
     required String name,
     required String message,
     required String time,
-  }) {
-    // Determine image path, size, and padding based on icon
-    String imagePath;
-    double imageWidth;
-    double imageHeight;
-    double containerPadding;
+  })
 
-    if (icon == Icons.person) {
-      imagePath = 'lib/client/messages/images/person.png';
-      imageWidth = 18;
-      imageHeight = 18;
-      containerPadding = 14; // smaller circle for person
-    } else {
-      imagePath = 'lib/client/messages/images/nest_mini.png';
-      imageWidth = 24;
-      imageHeight = 24;
-      containerPadding = 12; // bigger circle for support agent
-    }
+{
+  // Determine icon, size, fill, and padding based on passed icon
+  IconData displayedIcon;
+  double iconSize;
+  double containerPadding;
 
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(11),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image inside circle
-          Transform.translate(
-            offset: const Offset(-4, 0),
-            child: Container(
-              padding: EdgeInsets.all(containerPadding),
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFE7EA),
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset(
-                imagePath,
-                width: imageWidth,
-                height: imageHeight,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
+  // Material Symbols variations
+  double iconFill;
+  double iconWeight;
+  double iconGrade;
+  double iconOpticalSize;
 
-          // Message container
-          Expanded(
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Transform.translate(
-                  offset: const Offset(0, -4),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 7),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 0),
-                        Text(
-                          message,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF1C1B1F),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: -3,
-                  right: 0,
-                  child: Text(
-                    time,
-                    style: const TextStyle(fontSize: 12, color: Colors.black45),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+  if (icon == Icons.person) {
+    // ✅ Person in Material Symbols style (FILL 1, wght 700, GRAD 200, opsz 24)
+    displayedIcon = Symbols.person;
+    iconSize = 22;
+    containerPadding = 14;
+
+    iconFill = 1;
+    iconWeight = 600;
+    iconGrade = 200;
+    iconOpticalSize = 24;
+  } else {
+    displayedIcon = Symbols.nest_mini;
+    iconSize = 24;
+    containerPadding = 12;
+
+    // keep your other icon style (adjust if you want)
+    iconFill = 1;
+    iconWeight = 600;
+    iconGrade = 0;
+    iconOpticalSize = 24;
   }
+
+  return Container(
+    padding: const EdgeInsets.all(15),
+    decoration: BoxDecoration(
+      color: const Color(0xFFFFFFFF),
+      borderRadius: BorderRadius.circular(11),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Transform.translate(
+          offset: const Offset(-4, 0),
+          child: Container(
+            padding: EdgeInsets.all(containerPadding),
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFE7EA),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              displayedIcon,
+              size: iconSize,
+              color: const Color(0xFFE3001B),
+
+              // ✅ Material Symbols variations (matches your CSS)
+              fill: iconFill,
+              weight: iconWeight,
+              grade: iconGrade,
+              opticalSize: iconOpticalSize,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+
+        Expanded(
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Transform.translate(
+                offset: const Offset(0, -4),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 7),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        message,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF1C1B1F),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -3,
+                right: 0,
+                child: Text(
+                  time,
+                  style: const TextStyle(fontSize: 12, color: Colors.black45),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
   Widget notificationCard({
     required String message,
@@ -552,114 +576,117 @@ class _MessagesPageState extends State<MessagesPage> {
             : [],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Transform.translate(
-            offset: const Offset(-4, 0),
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFE7EA),
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset(
-                'lib/client/messages/images/notifications_active.png',
-                width: 24,
-                height: 24,
-              ),
-            ),
-          ),
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Transform.translate(
+      offset: const Offset(-4, 0),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: const BoxDecoration(
+          color: Color(0xFFFFE7EA),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          Symbols.notifications_active,
+          size: 22,
+          color: Color(0xFFE3001B),
 
-          const SizedBox(width: 10),
-
-          // FIXED PART: Column instead of Stack
-          Expanded(
-            child: SizedBox(
-              height: 52, // fixed consistent height for all notifications
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // message
-                  Expanded(
-                    child: Text(
-                      message,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF1C1B1F),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-
-                  // time always bottom-right
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Text(
-                      time,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black45,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+          // ✅ matches your CSS
+          fill: 1,
+          weight: 600,
+          grade: 0,
+          opticalSize: 24,
+        ),
       ),
+    ),
+
+    const SizedBox(width: 10),
+
+    Expanded(
+      child: SizedBox(
+        height: 52,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF1C1B1F),
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                time,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.black45,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ],
+),
     );
   }
 }
 
 class _BottomIcon extends StatelessWidget {
-  final IconData? icon;
-  final String? imagePath;
+  final IconData icon;
   final String label;
   final bool active;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
+  final Color? fillColor; // New parameter for custom fill color
 
   const _BottomIcon({
-    this.icon,
-    this.imagePath,
+    required this.icon,
     required this.label,
+    required this.onTap,
     this.active = false,
-    this.onTap,
-    super.key,
+    this.fillColor, // Allow fillColor to be passed
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final Color iconColor = active ? Color(0xFFE3001B) : const Color(0xFF969696);
+    final double fillValue = (active && fillColor != null) ? 1 : 0;
+
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (imagePath != null)
-            Image.asset(
-              imagePath!,
-              height: 16,
-              width: 18,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
-              fit: BoxFit.contain,
-            )
-          else if (icon != null)
+      borderRadius: BorderRadius.circular(0),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Icon(
               icon,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
+              size: 21,
+              color: fillColor != null && active ? fillColor : iconColor,
+              fill: fillValue,
+              weight: 100,
+              grade: 200,
+              opticalSize: 24,
             ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: active ? const Color(0xFFE3001B) : const Color(0xFF969696),
-              fontWeight: active ? FontWeight.w700 : FontWeight.normal,
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: iconColor,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -681,7 +708,7 @@ class ChatPage extends StatelessWidget {
           children: [
             // Simulates the AppBar, but inside the body and further down.
             const SizedBox(
-              height: 26,
+              height: 15,
             ), // Add extra space to move appbar further downward
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

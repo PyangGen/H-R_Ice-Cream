@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ice_cream/auth.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:ice_cream/client/create_page.dart';
-import 'package:ice_cream/client/forgot_password.dart';
 import 'package:ice_cream/client/home_page.dart';
 import 'package:ice_cream/client/landing_page.dart';
 import 'package:ice_cream/client/login_page.dart';
+import 'package:ice_cream/client/order/gcash.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -52,7 +53,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 25),
 
                   // --- Profile Image ---
                   CircleAvatar(
@@ -72,14 +73,18 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 25),
 
                   // --- Setting Tiles ---
                   _settingsTile(
                     iconWidget: const Icon(
-                      Icons.person_outline,
+                      Symbols.person,
                       size: 23,
                       color: Colors.black87,
+                      fill: 0,
+                      weight: 300,
+                      grade: 0,
+                      opticalSize: 24,
                     ),
                     text: "Account information",
                     onTap: () {
@@ -92,12 +97,14 @@ class ProfilePage extends StatelessWidget {
                     },
                   ),
                   _settingsTile(
-                    iconWidget: Image.asset(
-                      "lib/client/profile/images/key.png",
-                      width: 23,
-                      height: 23,
-                      color: Colors
-                          .black87, // optional if you want to tint it like the Icon
+                    iconWidget: const Icon(
+                      Symbols.key,
+                      size: 23,
+                      color: Colors.black87,
+                      fill: 0,
+                      weight: 300,
+                      grade: 0,
+                      opticalSize: 24,
                     ),
                     text: "Change password",
                     onTap: () {
@@ -110,11 +117,14 @@ class ProfilePage extends StatelessWidget {
                     },
                   ),
                   _settingsTile(
-                    iconWidget: Image.asset(
-                      "lib/client/profile/images/delete3.png",
-                      width: 23,
-                      height: 23,
-                      color: Colors.black87, // optional
+                    iconWidget: const Icon(
+                      Symbols.delete,
+                      size: 23,
+                      color: Colors.black87,
+                      fill: 0,
+                      weight: 300,
+                      grade: 0,
+                      opticalSize: 24,
                     ),
                     text: "Delete account",
                     onTap: () {
@@ -122,6 +132,26 @@ class ProfilePage extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const DeleteAccount(),
+                        ),
+                      );
+                    },
+                  ),
+                  _settingsTile(
+                    iconWidget: const Icon(
+                      Symbols.credit_card,
+                      size: 23,
+                      color: Colors.black87,
+                      fill: 0,
+                      weight: 300,
+                      grade: 0,
+                      opticalSize: 24,
+                    ),
+                    text: "Payment Method",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PaymentMethodPage(),
                         ),
                       );
                     },
@@ -144,7 +174,7 @@ class ProfilePage extends StatelessWidget {
                           await Auth().signOut();
                           Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (_) => LandingPage()),
+                            MaterialPageRoute(builder: (_) => LoginPage()),
                             (route) => false,
                           );
                         },
@@ -201,7 +231,7 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 25),
 
                         // --- Profile Image ---
                         CircleAvatar(
@@ -221,14 +251,18 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 25),
 
                         // --- Setting Tiles ---
                         _settingsTile(
                           iconWidget: const Icon(
-                            Icons.person_outline,
+                            Symbols.person,
                             size: 23,
                             color: Colors.black87,
+                            fill: 0,
+                            weight: 300,
+                            grade: 0,
+                            opticalSize: 24,
                           ),
                           text: "Account information",
                           onTap: () {
@@ -241,12 +275,14 @@ class ProfilePage extends StatelessWidget {
                           },
                         ),
                         _settingsTile(
-                          iconWidget: Image.asset(
-                            "lib/client/profile/images/key.png",
-                            width: 23,
-                            height: 23,
-                            color: Colors
-                                .black87,
+                          iconWidget: const Icon(
+                            Symbols.key,
+                            size: 23,
+                            color: Colors.black87,
+                            fill: 0,
+                            weight: 300,
+                            grade: 0,
+                            opticalSize: 24,
                           ),
                           text: "Change password",
                           onTap: () {
@@ -259,11 +295,14 @@ class ProfilePage extends StatelessWidget {
                           },
                         ),
                         _settingsTile(
-                          iconWidget: Image.asset(
-                            "lib/client/profile/images/delete3.png",
-                            width: 23,
-                            height: 23,
+                          iconWidget: const Icon(
+                            Symbols.delete,
+                            size: 23,
                             color: Colors.black87,
+                            fill: 0,
+                            weight: 300,
+                            grade: 0,
+                            opticalSize: 24,
                           ),
                           text: "Delete account",
                           onTap: () {
@@ -271,6 +310,26 @@ class ProfilePage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const DeleteAccount(),
+                              ),
+                            );
+                          },
+                        ),
+                        _settingsTile(
+                          iconWidget: const Icon(
+                            Symbols.credit_card,
+                            size: 23,
+                            color: Colors.black87,
+                            fill: 0,
+                            weight: 300,
+                            grade: 0,
+                            opticalSize: 24,
+                          ),
+                          text: "Payment Method",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PaymentMethodPage(),
                               ),
                             );
                           },
@@ -583,14 +642,16 @@ class EditProfilePage extends StatelessWidget {
                           // Handle edit tap
                         },
                         child: CircleAvatar(
-                          radius: 18, // adjust size as needed
-                          backgroundColor:
-                              Colors.white, // optional border/background
-                          child: Image.asset(
-                            "lib/client/profile/images/editpic.png",
-                            width: 35, // adjust size to fit
-                            height: 35,
-                            fit: BoxFit.contain,
+                          radius: 18,
+                          backgroundColor: const Color(0xFFF5F5F5),
+                          child: const Icon(
+                            Symbols.add_a_photo, // Use the symbol variant
+                            size: 20,
+                            color: Color(0xFF1C1B1F),
+                            fill: 0, // Explicitly specify no fill
+                            weight: 400,
+                            grade: 0,
+                            opticalSize: 24,
                           ),
                         ),
                       ),
@@ -2037,9 +2098,7 @@ class _DeleteConfirmPageState extends State<DeleteConfirmPage> {
   Widget build(BuildContext context) {
     final bool deleteEnabled = _isDeleteEnabled;
     final orientation = MediaQuery.of(context).orientation;
-    // Sizing for width
-    double buttonWidth;
-    double passwordBoxWidth;
+   
     Widget buildButton({required Widget child}) {
       if (orientation == Orientation.landscape) {
         return SizedBox(width: double.infinity, height: 56, child: child);
@@ -2056,7 +2115,7 @@ class _DeleteConfirmPageState extends State<DeleteConfirmPage> {
           builder: (context, constraints) {
             // In landscape, let password input, delete, cancel expand to full width (minus paddings)
             final isLandscape = orientation == Orientation.landscape;
-            final mainWidth = isLandscape ? double.infinity : 320.0;
+           
             return SingleChildScrollView(
               // Add a scroll view so the content can be scrolled up when the keyboard shows.
               padding: EdgeInsets.only(
