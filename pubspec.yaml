@@ -48,6 +48,9 @@ flutter:
     - lib/client/favorite/images/
     - lib/client/messages/images/
     - lib/client/profile/images/
+    - lib/driver/LF_images/
+    - lib/driver/profile/images/
+    - lib/driver/delivery/images/
     
 
   fonts:

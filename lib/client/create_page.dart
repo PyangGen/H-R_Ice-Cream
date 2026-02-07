@@ -74,8 +74,8 @@ class _SignUpPageState extends State<SignUpPage> {
           builder: (context, constraints) {
             return SingleChildScrollView(
               padding: EdgeInsets.only(
-                left: 24,
-                right: 24,
+                left: 20,
+                right: 20,
                 bottom: MediaQuery.of(context).viewInsets.bottom + 16,
               ),
               child: ConstrainedBox(

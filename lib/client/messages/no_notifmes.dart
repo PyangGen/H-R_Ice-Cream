@@ -153,29 +153,30 @@ class _MessagesPageState extends State<NoNotificationsPage> {
                       height: 170,
                       fit: BoxFit.contain,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 5),
 
                     // First text
                     Text(
                       selectedTab == 1
-                          ? 'Notifications will appear here'
-                          : 'Messages will appear here',
+                          ? 'No notifications'
+                          : 'No messages',
                       style: const TextStyle(
-                        fontSize: 18.22,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
                         color: Color(0xFF1C1B1F),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 3),
 
                     // Second text
                     Text(
-                      selectedTab == 1
-                          ? 'Watch this space for offers, updates, and more.'
-                          : 'Watch this space for offers, updates, and more.',
+                        selectedTab == 1
+                            ? 'You don\'t have any notifications at the\nmoment, check back later'
+                          : 'You don\'t have any messages at the\nmoment, check back later',
                       style: const TextStyle(
-                        fontSize: 13.66,
-                        color: Color(0xFF747474),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF7B7B7B),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -273,7 +274,7 @@ class _MessagesPageState extends State<NoNotificationsPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
             ],
           ),
         );

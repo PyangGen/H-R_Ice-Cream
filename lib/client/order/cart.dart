@@ -552,11 +552,14 @@ class _CartPageState extends State<CartPage> {
                           ),
                         ),
                       ),
-                      Text(
-                        "₱${total.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                          fontSize: 16.54,
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Text(
+                          "₱${total.truncateToDouble() == total ? total.toStringAsFixed(0) : total.toStringAsFixed(2).replaceAll(RegExp(r'\.00$'), '')}",
+                          style: const TextStyle(
+                            fontSize: 16.54,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
